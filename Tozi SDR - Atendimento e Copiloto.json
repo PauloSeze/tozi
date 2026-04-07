@@ -1,0 +1,2472 @@
+{
+  "name": "Tozi SDR - Atendimento e Copiloto",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "057f9fb9-0e80-43f2-a942-b230ed13a70f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -6704,
+        -48
+      ],
+      "id": "84e0d6dd-454d-48b1-947e-73ce57c6f1a9",
+      "name": "Webhook",
+      "webhookId": "057f9fb9-0e80-43f2-a942-b230ed13a70f"
+    },
+    {
+      "parameters": {
+        "description": "=Busca imóveis no Vista com filtros progressivos. Retorna JSON com lista de imóveis.\n\nESTRUTURA OBRIGATÓRIA:\n{\n  \"filter\": {},      // Filtros AND\n  \"advFilter\": {},   // Filtros complexos OR/AND\n  \"order\": {},       // Ordenação\n  \"paginacao\": {}    // Limite de resultados\n}\n\nFILTER (condições AND):\n- Codigo: \"0001\"\n- Cidade: \"Sinop\" (padrão, pode omitir)\n- Categoria: \"Casa\" | \"Apartamento\" | \"Comercial\" | \"Terreno\"\n- Status: [\"like\", \"%alug%\"] (SEMPRE incluir para locação)\n- ValorLocacao: [\"min\", \"max\"] ou [\"\", max] ou [min, \"\"]\n- Dormitorios: numero ou [min, max]\n- Suites: numero ou [min, max]  \n- Vagas: numero ou [min, max]\n- Bairro: \"Nome do Bairro\"\n- AreaPrivativa: [min, max] em m²\n- AreaTotal: [min, max] em m²\n- Latitude: [lat_min, lat_max] (quando usar buscar_localizacao)\n- Longitude: [lng_min, lng_max] (quando usar buscar_localizacao)\n\nADVFILTER (condições complexas):\nPara múltiplas opções de um campo:\n{\n  \"Or\": {\n    \"Bairro\": \"Centro\",\n    \"Or\": {\n      \"Bairro\": \"Jardim Botânico\"\n    }\n  }\n}\n\nPara busca textual:\n{\n  \"Endereco\": [\"like\", \"%Nome da Rua%\"],\n  \"CaracteristicaComplementar\": [\"like\", \"%piscina%\"]\n}\n\nORDER:\n- \"Codigo\": \"desc\" (mais recentes)\n- \"ValorLocacao\": \"asc\" (mais baratos primeiro)\n- Combine múltiplas ordenações\n\nPAGINACAO:\n- pagina: 1, 2, 3...\n- quantidade: 5 (recomendado), max 20\n\nESTRATÉGIA DE BUSCA:\n1. Se houver referência geográfica, use buscar_localizacao primeiro\n2. Comece amplo: apenas cidade e tipo\n3. Refine por valor se muitos resultados\n4. Adicione bairros se conhecer preferência\n5. Use características apenas se essencial",
+        "workflowId": {
+          "__rl": true,
+          "value": "ZvrUozDnbEzRZfFs",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZvrUozDnbEzRZfFs",
+          "cachedResultName": "Tozi TOOL - Buscar imóveis"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `Objeto com filter, advFilter, order e paginacao para busca de imóveis`, 'json') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2704,
+        -128
+      ],
+      "id": "c0c24505-ef08-43ff-89ec-834365ff6e8a",
+      "name": "buscar_imoveis"
+    },
+    {
+      "parameters": {
+        "description": "Converte referência geográfica em coordenadas para filtro de proximidade.\n\nSempre complete o input com \"sinop mt\" se não especificado.\n\nINPUT: texto com referência geográfica\n- \"fasipe sinop mt\"\n- \"unic campus sinop mt\"  \n- \"shopping sinop mt\"\n- \"hospital regional sinop mt\"\n\nOUTPUT: coordenadas para o campo filter do buscar_imoveis\n[{\n  \"Latitude\": [\"-11.806...\", \"-11.896...\"],\n  \"Longitude\": [\"-55.491...\", \"-55.583...\"]\n}]\n\nQUANDO USAR:\n- Clara mencionou referência geográfica (\"perto de\", \"próximo a\", \"região do\")\n- Antes de buscar_imoveis com filtro de localização\n\nQUANDO NÃO USAR:\n- Cliente informou bairro específico (use direto no filter)\n- Não há referência geográfica",
+        "workflowId": {
+          "__rl": true,
+          "value": "dTUGxaH5AwEDFen0",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/dTUGxaH5AwEDFen0",
+          "cachedResultName": "Tozi TOOL - Buscar Localização"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "local": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('local', `Nome do local ou ponto de referência`, 'string') }}"
+          },
+          "matchingColumns": [
+            "local"
+          ],
+          "schema": [
+            {
+              "id": "local",
+              "displayName": "local",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2848,
+        -128
+      ],
+      "id": "cc69fc14-4f76-4a2f-bba1-aa15722fbe04",
+      "name": "buscar_localizacao"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -2992,
+        -320
+      ],
+      "id": "02896689-8aee-4a9f-a809-35b6e2885b92",
+      "name": "Think Clara"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Consulta a base de conhecimento da Tozi Imobiliária.\n\nContém: horários de funcionamento, endereço, telefone, serviços oferecidos, \ndocumentação necessária para locação e venda, regras sobre fiador, pets, reformas, \nprocessos de desocupação, renovação de contrato, e perguntas frequentes.\n\nQUANDO USAR:\n- Cliente perguntou algo sobre a empresa ou seus processos\n- Você não tem certeza de uma informação\n- Dúvidas sobre documentação, regras ou procedimentos\n\nQUANDO NÃO USAR:\n- Informações que já estão no seu prompt (horário, endereço, telefone)\n- Perguntas que não são sobre a Tozi",
+        "memoryKey": {
+          "__rl": true,
+          "value": "faq_tozi",
+          "mode": "list"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -3264,
+        -320
+      ],
+      "id": "c8bd3004-0ade-4fbe-84a5-16f1da9ba2ce",
+      "name": "faq_tozi"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3264,
+        -160
+      ],
+      "id": "4eaf0246-ede1-45fe-a6a8-0e645d1d34f1",
+      "name": "Embeddings Clara",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.2-chat-latest",
+          "mode": "list",
+          "cachedResultName": "gpt-5.2-chat-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5024,
+        432
+      ],
+      "id": "8cb82aae-e0db-40eb-ad96-5e64b32f63f0",
+      "name": "LLM Copiloto",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.messages",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1712,
+        -624
+      ],
+      "id": "9ed1e354-490e-43f6-b385-bad31be33d93",
+      "name": "Separa Mensagens"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1488,
+        -624
+      ],
+      "id": "a35cfd3a-87b6-4586-bcf5-1e76e50bea4d",
+      "name": "Loop Enviar"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('Normalizar').first().json.conversa_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": {{ JSON.stringify($json['output.messages']) }},\n  \"message_type\": \"outgoing\",\n  \"content_type\": \"text\"\n}",
+        "options": {}
+      },
+      "id": "b03853b3-de9f-4f23-96e3-ddc466af8f00",
+      "name": "Envia Mensagem Clara",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        -624
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IPAsWeAlLuob4Lsy",
+          "name": "SPX - Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt_copiloto }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Copiloto — Assistente do Time Tozi\n\nVocê é o Copiloto da Tozi Imóveis (Sinop/MT). Você ajuda o time nos bastidores quando precisam.\n\n## Como funciona\n\nAlguém do time te chama usando `#tozi` numa mensagem privada. Você recebe a pergunta e responde também no privado. O cliente nunca te vê.\n\n## Seu papel\n\nSer o cérebro de apoio do time. Buscar informações, consultar bases, encontrar imóveis, responder dúvidas sobre processos. Tudo que o atendente precisar pra atender melhor.\n\n## Contexto\n\n```\nNome do cliente: {{ $('Normalizar').item.json.nome_cliente }}\nNome do atendente: {{ $('Normalizar').item.json.nome_atendente }}\n```\n\n## Tools\n\n### consultar_conversa\n\nBusca o histórico de mensagens da conversa atual.\n\nUse quando precisar de contexto sobre o que foi conversado. Retorna mensagens públicas e privadas.\n\n### buscar_localizacao\n\nConverte referências geográficas em coordenadas para filtrar imóveis por proximidade.\n\nSempre adicione \"sinop mt\" ao buscar. Use antes de buscar_imoveis quando mencionarem localização por referência.\n\n### buscar_imoveis\n\nBusca imóveis no sistema Vista.\n\nInput obrigatório (sempre os 4 campos):\n```json\n{\n  \"filter\": {},\n  \"advFilter\": {},\n  \"order\": {\"Codigo\": \"desc\"},\n  \"paginacao\": {\"pagina\": 1, \"quantidade\": 5}\n}\n```\n\nFiltros: Cidade, Categoria, ValorLocacao, ValorVenda, Status, Bairro, Dormitorios, Latitude/Longitude.\n\nRetorna: Codigo, Dormitorios, Bairro, Endereco, ValorLocacao, url.\n\n### consultar_cadastro\n\nBusca cliente na base pelo nome. Use para localizar inquilinos ou proprietários.\n\n### faq_tozi\n\nConsulta a base de conhecimento da Tozi. Processos, documentação, regras, garantias, prazos, taxas.\n\n## Comportamento\n\nSeja direto e útil. O atendente está no meio de um atendimento e precisa de informação rápida.\n\nSua resposta vai automaticamente como mensagem privada.\n\nNão faça perguntas ao atendente — ele não vai responder, está ocupado atendendo. Se faltar informação, use as tools pra buscar ou diga o que precisa saber.\n\nSe não encontrar o que foi pedido, diga claramente.\n\nVocê é invisível pro cliente. Tudo que você faz é nos bastidores."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -4832,
+        208
+      ],
+      "id": "32214f13-52f6-4d9b-9960-603fb081a94f",
+      "name": "Agente Copiloto"
+    },
+    {
+      "parameters": {
+        "description": "=Atribui a conversa para a Camila. Envia resumo como mensagem privada \ne sugestão como mensagem privada separada (se fornecida).\n\nINPUT:\n{\n  \"resumo\": \"texto do resumo\",\n  \"sugestao\": \"texto da sugestão ou string vazia se não houver\"\n}\n\nA tool internamente:\n1. Envia resumo como mensagem privada\n2. Envia sugestão como mensagem privada separada (se não for vazia)\n3. Atribui a conversa para a Camila\n\nQUANDO USAR:\n- Sempre por último, depois de todas as buscas\n\nQUANDO NÃO USAR:\n- Se ainda está fazendo buscas",
+        "workflowId": {
+          "__rl": true,
+          "value": "PTHEJTw8ZWkgXt7F",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/PTHEJTw8ZWkgXt7F",
+          "cachedResultName": "Tozi TOOL - Atribuir Atendimento"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sender_id": "={{ $('Normalizar').first().json.contato_id }}",
+            "chat_id": "={{ $('Normalizar').first().json.conversa_id }}",
+            "resumo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('resumo', ``, 'string') }}",
+            "sugestao": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('sugestao', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sender_id",
+              "displayName": "sender_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "resumo",
+              "displayName": "resumo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sugestao",
+              "displayName": "sugestao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2544,
+        -128
+      ],
+      "id": "59d26409-3987-43ff-b18f-64bcb0f031c0",
+      "name": "atribuir_atendimento"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// NORMALIZAR v2 — Code Node (n8n)\n// Projeto Tozi Imobiliária\n// Recebe webhook bruto do SPX, classifica e padroniza\n// ============================================================\n\nconst body = $input.first().json.body;\n\n// ------------------------------------------------------------\n// 1. DETECTAR FORMATO DO WEBHOOK\n// ------------------------------------------------------------\n\nconst evento_original = body.event || body.conversation?.event || 'desconhecido';\nconst is_status_changed = evento_original === 'conversation_status_changed';\n\n// ------------------------------------------------------------\n// 2. EXTRAIR DADOS BRUTOS\n// ------------------------------------------------------------\n\nlet conversa, contato_id, inbox_id, nome_cliente, nome_atendente;\nlet content, content_type, content_attrs, attachments;\nlet message_type, sender_type, sender_id, privado, mensagem_id, timestamp;\nlet status_conversa, labels, custom_attrs, em_atendimento;\nlet team_id;\n\nif (is_status_changed) {\n  // Formato 2 — conversation_status_changed\n  conversa        = body;\n  conversa_id     = body.id;\n  inbox_id        = body.inbox_id;\n  status_conversa = body.status;\n  labels          = body.labels || [];\n  custom_attrs    = body.custom_attributes || {};\n  em_atendimento  = custom_attrs.atendimento === true;\n  timestamp       = body.timestamp;\n  team_id         = body.meta?.team?.id || null;\n\n  contato_id      = body.contact_inbox?.contact_id || null;\n  nome_cliente    = body.meta?.sender?.name || '';\n  nome_atendente  = body.meta?.assignee?.name || null;\n\n  const last_msg  = body.messages?.[0] || null;\n  mensagem_id     = last_msg?.id || null;\n  content         = last_msg?.content || null;\n  content_type    = last_msg?.content_type || 'text';\n  content_attrs   = last_msg?.content_attributes || {};\n  attachments     = last_msg?.attachments || [];\n  message_type    = last_msg?.message_type ?? null;\n  sender_type     = last_msg?.sender_type?.toLowerCase() || null;\n  sender_id       = last_msg?.sender_id || null;\n  privado         = last_msg?.private || false;\n\n} else {\n  // Formato 1 — message_created (e outros eventos de mensagem)\n  conversa_id     = body.conversation?.id;\n  inbox_id        = body.inbox?.id || body.conversation?.inbox_id;\n  status_conversa = body.conversation?.status || 'open';\n  labels          = body.conversation?.labels || [];\n  custom_attrs    = body.conversation?.custom_attributes || {};\n  em_atendimento  = custom_attrs.atendimento === true;\n  timestamp       = body.conversation?.timestamp || body.created_at;\n  team_id         = body.conversation?.meta?.team?.id || null;\n\n  contato_id      = body.conversation?.contact_inbox?.contact_id || null;\n  nome_cliente    = body.conversation?.meta?.sender?.name || '';\n  nome_atendente  = body.conversation?.meta?.assignee?.name || null;\n\n  mensagem_id     = body.id;\n  content         = body.content;\n  content_type    = body.content_type || 'text';\n  content_attrs   = body.content_attributes || {};\n  privado         = body.private === true;\n\n  // Attachments: podem vir no nível raiz ou dentro de messages\n  attachments     = body.attachments\n                    || body.conversation?.messages?.[0]?.attachments\n                    || [];\n\n  // sender_type: detectar tipo do remetente\n  // Contact NÃO tem campo \"type\" no nível raiz, mas tem phone_number/identifier\n  // User tem type: \"user\", AgentBot tem type: \"agent_bot\"\n  const raw_sender_type = body.sender?.type || '';\n  if (raw_sender_type) {\n    sender_type = raw_sender_type.toLowerCase().replace('::', '_');\n  } else if (body.sender?.phone_number || body.sender?.identifier) {\n    sender_type = 'contact';\n  } else if (body.message_type === 'incoming') {\n    sender_type = 'contact';\n  } else {\n    sender_type = '';\n  }\n  sender_id = body.sender?.id || null;\n\n  // message_type: webhook traz como string\n  const mt_str = body.message_type;\n  message_type = mt_str === 'incoming' ? 0\n               : mt_str === 'outgoing' ? 1\n               : mt_str === 'activity' ? 2\n               : (typeof mt_str === 'number' ? mt_str : null);\n}\n\n// ------------------------------------------------------------\n// 3. CLASSIFICAR AUTOR\n// ------------------------------------------------------------\n\nlet autor;\n\nif (message_type === 2) {\n  autor = 'sistema';\n} else if (sender_type === 'agent_bot') {\n  autor = privado ? 'bot_nota' : 'clara';\n} else if (sender_type === 'contact') {\n  autor = 'cliente';\n} else if (sender_type === 'user') {\n  autor = 'atendente';\n} else if (sender_id === null && sender_type === null) {\n  autor = 'sistema';\n} else {\n  autor = 'desconhecido';\n}\n\n// ------------------------------------------------------------\n// 4. CLASSIFICAR TIPO DE CONTEÚDO\n// ------------------------------------------------------------\n\nconst attachment = (Array.isArray(attachments) && attachments.length > 0)\n  ? attachments[0]\n  : null;\n\nlet tipo_conteudo;\nlet midia = null;\n\nif (attachment) {\n  const ft = (attachment.file_type || '').toLowerCase();\n  const tipo_map = {\n    'image': 'imagem',\n    'audio': 'audio',\n    'video': 'video',\n    'file': 'documento',\n    'location': 'localizacao',\n    'sticker': 'sticker',\n    'contact': 'contato',\n  };\n  tipo_conteudo = tipo_map[ft] || 'documento';\n\n  midia = {\n    tipo: ft,\n    url: attachment.data_url || null,\n    thumb_url: attachment.thumb_url || null,\n    file_size: attachment.file_size || null,\n    file_name: attachment.extension\n      ? `${attachment.message_id || 'file'}.${attachment.extension}`\n      : (attachment.data_url?.split('/')?.pop() || null),\n    width: attachment.width || null,\n    height: attachment.height || null,\n    // Dados extras para contato compartilhado\n    fallback_title: attachment.fallback_title || null,\n    meta: attachment.meta || null,\n  };\n} else if (content && content.trim() !== '') {\n  tipo_conteudo = 'texto';\n} else {\n  tipo_conteudo = 'sem_conteudo';\n}\n\n// ------------------------------------------------------------\n// 5. GERAR texto_humano\n// ------------------------------------------------------------\n\nconst autor_legivel = autor === 'cliente' ? 'cliente'\n                    : autor === 'atendente' ? 'atendente'\n                    : autor === 'clara' ? 'assistente'\n                    : 'remetente';\n\n// Legenda: quando tem attachment + content, o content é a legenda\n// Exceção: contato compartilhado — content é o nome do contato, não legenda\nconst legenda = (attachment && content && content.trim() && tipo_conteudo !== 'contato') ? content.trim() : null;\n\n// Contato compartilhado: extrair nome e telefone do attachment\nlet contato_info = `[Contato compartilhado pelo ${autor_legivel}]`;\nif (midia?.tipo === 'contact') {\n  const nome_contato = [midia.meta?.firstName, midia.meta?.lastName].filter(Boolean).join(' ') || null;\n  const tel_contato = midia.fallback_title || null;\n  if (nome_contato && tel_contato) {\n    contato_info = `[Contato compartilhado pelo ${autor_legivel}: ${nome_contato} — ${tel_contato}]`;\n  } else if (nome_contato) {\n    contato_info = `[Contato compartilhado pelo ${autor_legivel}: ${nome_contato}]`;\n  } else if (tel_contato) {\n    contato_info = `[Contato compartilhado pelo ${autor_legivel}: ${tel_contato}]`;\n  }\n}\n\nconst texto_humano_base = {\n  'texto': content || '',\n  'imagem': `[Imagem enviada pelo ${autor_legivel}]`,\n  'audio': `[Áudio enviado pelo ${autor_legivel}]`,\n  'video': `[Vídeo enviado pelo ${autor_legivel}]`,\n  'localizacao': `[Localização compartilhada pelo ${autor_legivel}]`,\n  'documento': `[Documento${midia?.file_name ? ': ' + midia.file_name : ''} enviado pelo ${autor_legivel}]`,\n  'sticker': '[Figurinha]',\n  'contato': contato_info,\n  'sem_conteudo': '[Mensagem sem conteúdo]',\n};\n\nconst base = texto_humano_base[tipo_conteudo] || '[Mensagem não identificada]';\nconst texto_humano = legenda ? `${base}\\nLegenda: ${legenda}` : base;\n\n// ------------------------------------------------------------\n// 6. DETERMINAR TIPO DE EVENTO\n// ------------------------------------------------------------\n\nlet tipo_evento;\n\nif (is_status_changed) {\n  tipo_evento = 'status_changed';\n} else if (content_attrs?.nps_survey === true) {\n  tipo_evento = 'nps';\n} else {\n  tipo_evento = 'mensagem';\n}\n\n// ------------------------------------------------------------\n// 7. ROTEAMENTO\n// ------------------------------------------------------------\n\nlet rota = 'ignorar';\nlet rota_final = 'ignorar';\nlet motivo_rota = '';\n\nconst tipos_midia_processavel = ['imagem', 'audio', 'video', 'documento', 'localizacao', 'contato'];\n\n// Auxiliares para detecção de NPS\nconst texto_limpo = (content || '').trim();\nconst eh_numero_nps = /^(10|[0-9])$/.test(texto_limpo);\nconst tem_team = team_id != null;\n\n// REGRA 0 — Status changed\nif (is_status_changed) {\n  if (status_conversa === 'resolved') {\n    rota = 'limpar';\n    rota_final = 'limpar';\n    motivo_rota = 'Conversa resolvida';\n  } else {\n    rota = 'ignorar';\n    rota_final = 'ignorar';\n    motivo_rota = `Status changed não-resolved: ${status_conversa}`;\n  }\n}\n\n// REGRA 1 — Activity\nelse if (message_type === 2) {\n  rota = 'ignorar';\n  rota_final = 'ignorar';\n  motivo_rota = 'Mensagem de sistema (activity)';\n}\n\n// REGRA 2 — NPS (mensagem de saída com nps_survey)\nelse if (content_attrs?.nps_survey === true) {\n  rota = 'ignorar';\n  rota_final = 'ignorar';\n  motivo_rota = 'Pesquisa NPS automática';\n}\n\n// REGRA 3 — AgentBot\nelse if (sender_type === 'agent_bot') {\n  rota = 'ignorar';\n  rota_final = 'ignorar';\n  motivo_rota = 'Mensagem do bot (Clara/sistema)';\n}\n\n// REGRA 4 — Provável resposta de NPS\nelse if (autor === 'cliente' && status_conversa === 'resolved' && eh_numero_nps && tem_team) {\n  rota = 'ignorar';\n  rota_final = 'ignorar';\n  motivo_rota = 'Provável resposta de NPS (número 0-10 em conversa resolvida com time atribuído)';\n}\n\n// REGRA 5 — Cliente (Contact)\nelse if (autor === 'cliente') {\n  if (em_atendimento) {\n    rota = 'ignorar';\n    rota_final = 'ignorar';\n    motivo_rota = 'Cliente em atendimento humano';\n  } else if (tipos_midia_processavel.includes(tipo_conteudo)) {\n    rota = 'midia';\n    rota_final = 'clara';\n    motivo_rota = `Mídia do cliente (${tipo_conteudo}) para processamento → Clara`;\n  } else {\n    rota = 'clara';\n    rota_final = 'clara';\n    motivo_rota = tipo_conteudo === 'texto'\n      ? 'Mensagem de texto do cliente'\n      : `Conteúdo não-processável do cliente (${tipo_conteudo})`;\n  }\n}\n\n// REGRA 6 — Atendente (User)\nelse if (autor === 'atendente') {\n  if (privado) {\n    const conteudo_lower = (content || '').toLowerCase();\n    if (conteudo_lower.includes('#tozi')) {\n      rota = 'copiloto';\n      rota_final = 'copiloto';\n      motivo_rota = 'Chamada ao copiloto via #tozi';\n    } else {\n      rota = 'ignorar';\n      rota_final = 'ignorar';\n      motivo_rota = 'Nota privada sem menção ao copiloto';\n    }\n  } else {\n    // Público\n    if (tipos_midia_processavel.includes(tipo_conteudo)) {\n      rota = 'midia';\n      rota_final = 'marcar';\n      motivo_rota = `Mídia do atendente (${tipo_conteudo}) para processamento → Marcar atendimento`;\n    } else {\n      rota = 'marcar';\n      rota_final = 'marcar';\n      motivo_rota = 'Atendente respondeu publicamente';\n    }\n  }\n}\n\n// REGRA 7 — Fallback\nelse {\n  rota = 'ignorar';\n  rota_final = 'ignorar';\n  motivo_rota = `Caso não mapeado: autor=${autor}, sender_type=${sender_type}`;\n}\n\n// ------------------------------------------------------------\n// 8. LIMPEZA DO #tozi (Copiloto)\n// ------------------------------------------------------------\n\nlet texto = content || null;\n\nif (rota === 'copiloto' && texto) {\n  texto = texto\n    .replace(/#tozi/gi, '')\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\n// ------------------------------------------------------------\n// 9. MONTAR SAÍDA\n// ------------------------------------------------------------\n\nreturn {\n  json: {\n    // Roteamento\n    rota,\n    rota_final,\n    motivo_rota,\n\n    // Identificação\n    conversa_id,\n    contato_id,\n    inbox_id,\n    sender_id,\n    mensagem_id,\n\n    // Classificação\n    autor,\n    tipo_conteudo,\n    tipo_evento,\n\n    // Conteúdo\n    texto,\n    texto_humano,\n    legenda,\n\n    // Mídia\n    midia,\n\n    // Contexto\n    em_atendimento,\n    privado,\n    nome_cliente,\n    nome_atendente,\n    labels,\n    status_conversa,\n    team_id,\n    custom_attributes: custom_attrs,\n\n    // Meta\n    timestamp,\n    evento_original,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6256,
+        -48
+      ],
+      "id": "6daa4dbe-e125-4108-ab1f-dc5da0693de9",
+      "name": "Normalizar"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('Normalizar').item.json.conversa_id }}/custom_attributes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_attributes\": {\n    \"atendimento\": false\n  }\n}",
+        "options": {}
+      },
+      "id": "a07c27d2-7f87-4ecf-ad97-62078e9b9e2d",
+      "name": "Set Atendimento False",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5648,
+        608
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('Normalizar').item.json.conversa_id }}/custom_attributes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_attributes\": {\n    \"atendimento\": true\n  }\n}",
+        "options": {}
+      },
+      "id": "2bbeed70-4dc9-42cc-af47-244df0f328d4",
+      "name": "Set Atendimento True",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5648,
+        416
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Normalizar').item.json.midia.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5328,
+        -496
+      ],
+      "id": "4225a8a9-b0fd-4ce9-b49e-8b61a995fe67",
+      "name": "Download Audio"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -5168,
+        -496
+      ],
+      "id": "c9f98a60-5ace-41c2-9769-c8aa4185a0c4",
+      "name": "Whisper Transcricao",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "=Analise a imagem e retorne uma descrição objetiva e concisa em português.\n\nIdentifique e informe:\n\nTIPO DE IMAGEM: foto de fachada, foto de cômodo, foto de planta/terreno, foto de documento, print de tela, foto de placa, mapa/localização, foto pessoal, outro.\n\nIMÓVEL (se identificável):\n- Tipo: casa, apartamento, sobrado, kitnet, barracão, sala comercial, terreno, fazenda, outro\n- Características visíveis: número de pavimentos, garagem, piscina, estado de conservação, acabamento\n- Cômodo (se interno): sala, quarto, cozinha, banheiro, área de serviço, varanda, outro\n\nPLACA (se visível):\n- Existe placa de venda, aluguel, aluga-se ou vende-se? SIM ou NÃO\n- Se SIM: tipo (venda ou aluguel) e código numérico se legível\n\nTEXTO NA IMAGEM (se houver): transcreva qualquer texto legível relevante — valores, telefones, códigos, endereços.\n\nDESCRIÇÃO GERAL: em 1-2 frases, descreva o que a imagem mostra de forma útil para um atendente imobiliário.\n\nSeja direto. Não invente informações que não são visíveis na imagem.",
+        "imageUrls": "={{ $json.midia.url }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -5168,
+        -272
+      ],
+      "id": "e5ef46b5-5ecc-4952-84b5-e9fe0a3157d3",
+      "name": "Vision Analise Imagem",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "=tozi.buffer.{{ $('Normalizar').item.json.conversa_id }}",
+        "messageData": "={{ $('Normalizar').item.json.texto_humano }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -5376,
+        -928
+      ],
+      "id": "c82624ff-e737-4632-be1d-afbc3b621424",
+      "name": "Buffer Push",
+      "credentials": {
+        "redis": {
+          "id": "HaUfB6DdzQLeSl8y",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "mensagens",
+        "key": "=tozi.buffer.{{ $('Normalizar').item.json.conversa_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -4896,
+        -928
+      ],
+      "id": "7ddbf4cd-3aec-4d29-9aec-f266541d95a3",
+      "name": "Buffer Get",
+      "credentials": {
+        "redis": {
+          "id": "HaUfB6DdzQLeSl8y",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=tozi.buffer.{{ $('Normalizar').item.json.conversa_id }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -4448,
+        -928
+      ],
+      "id": "dd555eb4-7fbb-4446-a316-0ebc4311b665",
+      "name": "Buffer Clear",
+      "credentials": {
+        "redis": {
+          "id": "HaUfB6DdzQLeSl8y",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5152,
+        -928
+      ],
+      "id": "94940f43-e14f-4d52-a2ca-93498364048f",
+      "name": "Aguarda Debounce",
+      "webhookId": "66c0c3ae-2913-4d60-a936-9f8649101263"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 3,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "808f133a-e478-4669-8c42-b416bee6de71",
+              "leftValue": "={{  $json.mensagens?.last() || '{}' }}",
+              "rightValue": "={{ $('Roteamento').item.json.texto_humano }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -4672,
+        -928
+      ],
+      "id": "11a37ac8-3dc8-40fa-a697-e3e546ac673f",
+      "name": "Verifica Buffer"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg-final",
+              "name": "mensagem",
+              "value": "={{ $json.mensagens.map(value => (value)).join('\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4224,
+        -928
+      ],
+      "id": "478a2c03-310f-45ee-b2e8-b85db4b2cca8",
+      "name": "Prepara Input Clara"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.2-chat-latest",
+          "mode": "list",
+          "cachedResultName": "gpt-5.2-chat-latest"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -3520,
+        -320
+      ],
+      "id": "db11f6ad-9f1b-4c27-9081-d9a9083221ca",
+      "name": "LLM Clara",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=tozi.chat.memory.{{ $('Normalizar').first().json.conversa_id }}",
+        "tableName": "tozi_chat_historicos",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -3376,
+        -320
+      ],
+      "id": "77b5f873-dc74-40eb-9349-a3725c390db1",
+      "name": "Memoria Clara",
+      "credentials": {
+        "postgres": {
+          "id": "OtTtzkmkZr0tJxfc",
+          "name": "Postgres account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2992,
+        -128
+      ],
+      "id": "8f922b93-332d-4a81-9ce8-db584cd988bc",
+      "name": "LLM Atribuidor",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Converte referência geográfica em coordenadas para filtro de proximidade.\n\nSempre complete o input com \"sinop mt\" se não especificado.\n\nINPUT: texto com referência geográfica\n- \"fasipe sinop mt\"\n- \"unic campus sinop mt\"  \n- \"shopping sinop mt\"\n- \"hospital regional sinop mt\"\n\nOUTPUT: coordenadas para o campo filter do buscar_imoveis\n[{\n  \"Latitude\": [\"-11.806...\", \"-11.896...\"],\n  \"Longitude\": [\"-55.491...\", \"-55.583...\"]\n}]\n\nQUANDO USAR:\n- Clara mencionou referência geográfica (\"perto de\", \"próximo a\", \"região do\")\n- Antes de buscar_imoveis com filtro de localização\n\nQUANDO NÃO USAR:\n- Cliente informou bairro específico (use direto no filter)\n- Não há referência geográfica",
+        "workflowId": {
+          "__rl": true,
+          "value": "dTUGxaH5AwEDFen0",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/dTUGxaH5AwEDFen0",
+          "cachedResultName": "Tool Tozi - Buscar Localização"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "local": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('local', `Nome do local ou ponto de referência`, 'string') }}"
+          },
+          "matchingColumns": [
+            "local"
+          ],
+          "schema": [
+            {
+              "id": "local",
+              "displayName": "local",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -4896,
+        432
+      ],
+      "id": "49c6495e-ce31-4196-81fb-5e99017fd2fa",
+      "name": "buscar_localizacao (copiloto)"
+    },
+    {
+      "parameters": {
+        "description": "Busca imóveis na API Vista com filtros. Retorna dados completos incluindo URL do site.\n\nINPUT: sempre os 4 campos obrigatórios\n{\n  \"filter\": {},\n  \"advFilter\": {},\n  \"order\": {\"Codigo\": \"desc\"},\n  \"paginacao\": {\"pagina\": 1, \"quantidade\": 5}\n}\n\nFILTER:\n- Cidade: \"Sinop\" (padrão)\n- Categoria: \"Casa\", \"Apartamento\", \"Terreno\", \"Kitnet\", \"Sala Comercial\"\n- ValorLocacao: [\"\", 2000] = até 2000\n- ValorVenda: [200000, \"\"] = mínimo 200k\n- Status: [\"like\", \"%alug%\"] ou [\"like\", \"%vend%\"]\n- Bairro: \"nome do bairro\"\n- Latitude/Longitude: arrays do buscar_localizacao\n\nRETORNA: Codigo, Dormitorios, Bairro, Cidade, Endereco, ValorLocacao, TituloSite, url\n\nUse os dados retornados (especialmente url) para montar a sugestão no atribuir_atendimento.\n\nQUANDO USAR:\n- Critérios suficientes (tipo + pelo menos 1 filtro)\n\nQUANDO NÃO USAR:\n- Sem critérios mínimos\n- Demanda é suporte",
+        "workflowId": {
+          "__rl": true,
+          "value": "ZvrUozDnbEzRZfFs",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZvrUozDnbEzRZfFs",
+          "cachedResultName": "Tozi TOOL - Buscar imóveis"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('query', `Objeto com filter, advFilter, order e paginacao para busca de imóveis`, 'json') }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -4752,
+        432
+      ],
+      "id": "0b63f07c-c9a6-4acd-a0e9-1f72fcf4f715",
+      "name": "buscar_imoveis (copiloto)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('Normalizar').first().json.conversa_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": {{ JSON.stringify(String($json.output || '')) }},\n  \"message_type\": \"outgoing\",\n  \"private\": true,\n  \"content_type\": \"text\"\n}",
+        "options": {}
+      },
+      "id": "43a261c1-f03d-455a-9d3f-769ad6537254",
+      "name": "Envia Resposta Copiloto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4128,
+        224
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IPAsWeAlLuob4Lsy",
+          "name": "SPX - Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Subagente que enriquece e atribui a conversa para o time.\n\nDiga em linguagem natural o que o cliente quer. Inclua o nome confirmado e \ntoda informação relevante coletada durante a conversa.\n\nEXEMPLOS:\n- \"João Silva quer alugar casa em Sinop, até 2000 reais, 3 quartos, tem cachorro\"\n- \"Maria Souza é inquilina com problema no boleto do aluguel, imóvel na Rua das Figueiras\"\n- \"Carlos Pereira quer anunciar terreno para venda no Jardim Paraíso\"\n- \"Ana Lima quer comprar casa, sem preferência de bairro, orçamento de 300 mil\"\n- \"Nome é Pedro Santos, só cumprimentou, não consegui identificar a demanda\"\n\nQUANDO USAR:\n- Quando entender o motivo do contato e tiver confirmado o nome do cliente\n- Para suporte: assim que entender o problema\n- Para comercial dentro do horário: assim que tiver o básico\n- Para comercial fora do horário: quando tiver coletado informação suficiente\n\nQUANDO NÃO USAR:\n- Se já tem alguém atribuído na conversa\n- Se ainda não entendeu o que o cliente precisa\n- Se ainda não confirmou o nome do cliente",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Atribuidor — Subagente de Enriquecimento e Atribuição\n\nVocê é um subagente chamado como tool pela Clara (pré-atendimento da Tozi Imóveis, Sinop/MT). Você trabalha nos bastidores: o cliente nunca te vê e você nunca fala com ele.\n\n## Seu papel\n\nA Clara conversou com o cliente e te chamou dizendo o que ele precisa. Seu trabalho:\n\n1. Analisar o que a Clara coletou\n2. Enriquecer com buscas relevantes (se aplicável)\n3. Montar o resumo e a sugestão (se houver)\n4. Atribuir para a Camila com tudo empacotado\n5. Retornar para a Clara confirmando o que foi feito\n\n## Como pensar\n\nAntes de agir, avalie o que a Clara passou:\n\n- **Tem critérios para buscar imóveis?** (tipo + cidade + algum filtro) → Busque\n- **Mencionou referência geográfica?** → Busque coordenadas primeiro, depois imóveis\n- **É suporte com nome do cliente?** → Consulte cadastro\n- **Demanda vaga ou indefinida?** → Só monte resumo básico e atribua\n\nNem toda conversa precisa de enriquecimento. Não force buscas sem informação.\n\n## Resumo\n\nSempre obrigatório. Descreva de forma concisa o que está acontecendo: quem é o cliente, o que quer, o que foi coletado. O atendente que ler deve entender o contexto em segundos.\n\n## Sugestão\n\nOpcional. Só quando você encontrou resultados concretos (imóveis, cadastro). Use os dados retornados pelas tools para montar. Se não buscou nada ou não encontrou nada, mande string vazia.\n\n## Cenários\n\n### Locação ou Venda\n\nSe tem critérios (tipo, valor, região, quartos):\n1. Referência geográfica? → `buscar_localizacao`\n2. `buscar_imoveis` com critérios disponíveis\n3. `atribuir_atendimento` com resumo + sugestão usando os resultados\n\nSe tem pouco:\n1. `atribuir_atendimento` com resumo e sugestao `\"\"`\n\n### Captação\n\nCliente quer anunciar imóvel próprio.\n1. `atribuir_atendimento` com resumo e sugestao `\"\"`\n\n### Suporte\n\nCliente é inquilino/proprietário com problema.\n1. Tem nome? → `consultar_cadastro`\n2. `atribuir_atendimento` com resumo + sugestão com dados do cadastro (se encontrou), ou sugestao `\"\"` se não encontrou\n\n### Demanda indefinida\n\n1. `atribuir_atendimento` com resumo básico e sugestao `\"\"`\n\n## Retorno para a Clara\n\nDepois de executar, retorne apenas \"atribuído.\"\n\n## Tools\n\n### buscar_localizacao\n\nConverte referência geográfica em coordenadas para filtro de proximidade.\n\nSempre complete com \"sinop mt\" se não especificado.\n\nUse antes de buscar_imoveis quando há referência geográfica.\n\n### buscar_imoveis\n\nBusca imóveis na API Vista.\n\nInput obrigatório (sempre os 4 campos):\n```json\n{\n  \"filter\": {},\n  \"advFilter\": {},\n  \"order\": {\"Codigo\": \"desc\"},\n  \"paginacao\": {\"pagina\": 1, \"quantidade\": 5}\n}\n```\n\nRegras de filter:\n- Cidade: \"Sinop\" (padrão)\n- Categoria: \"Casa\", \"Apartamento\", \"Terreno\", \"Kitnet\", \"Sala Comercial\"\n- ValorLocacao: [\"\", 2000] = até 2000\n- ValorVenda: [200000, \"\"] = mínimo 200k\n- Status: [\"like\", \"%alug%\"] ou [\"like\", \"%vend%\"]\n- Bairro: nome direto\n- Latitude/Longitude: arrays do buscar_localizacao\n\nRetorna: Codigo, Dormitorios, Bairro, Cidade, Endereco, ValorLocacao, TituloSite, url\n\n### consultar_cadastro\n\nBusca cliente na base pelo nome.\n\nUse em casos de suporte quando a Clara informou o nome do cliente.\n\n### atribuir_atendimento\n\nAtribui a conversa para a Camila. Envia resumo como mensagem privada e, se houver sugestão, envia como mensagem privada separada.\n\nInput:\n```json\n{\n  \"resumo\": \"texto do resumo\",\n  \"sugestao\": \"texto da sugestão ou string vazia\"\n}\n```\n\nSempre a última tool chamada. Depois dela, retorne a confirmação para a Clara.\n\n## Importante\n\n- Você é invisível para o cliente\n- Tudo vai como mensagem privada para o atendente\n- Links dos imóveis vêm do retorno do buscar_imoveis (campo url)\n- Atribuir_atendimento é sempre o último passo\n- Retorne confirmação curta para a Clara ao final"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 3,
+      "position": [
+        -2864,
+        -320
+      ],
+      "id": "3b6805be-e8a1-486d-83b5-1a89818ccdc2",
+      "name": "Atribuidor"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Consulta a base de conhecimento da Tozi Imobiliária.\n\nContém: horários de funcionamento, endereço, telefone, serviços oferecidos, \ndocumentação necessária para locação e venda, regras sobre fiador, pets, reformas, \nprocessos de desocupação, renovação de contrato, e perguntas frequentes.\n\nQUANDO USAR:\n- Cliente perguntou algo sobre a empresa ou seus processos\n- Você não tem certeza de uma informação\n- Dúvidas sobre documentação, regras ou procedimentos\n\nQUANDO NÃO USAR:\n- Informações que já estão no seu prompt (horário, endereço, telefone)\n- Perguntas que não são sobre a Tozi",
+        "memoryKey": {
+          "__rl": true,
+          "value": "faq_tozi",
+          "mode": "list"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -4640,
+        432
+      ],
+      "id": "80a70c18-1b2c-495f-8ab5-c236f1bae22f",
+      "name": "faq_tozi (copiloto)"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -4560,
+        640
+      ],
+      "id": "c90d5e48-de89-44d1-8ca3-1cd0db11e189",
+      "name": "Embeddings Copiloto",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rota }}",
+                    "rightValue": "clara",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r1-clara"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "clara"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rota }}",
+                    "rightValue": "midia",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r3-midia"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "midia"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rota }}",
+                    "rightValue": "copiloto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r2-copiloto"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "copiloto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rota }}",
+                    "rightValue": "marcar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r4-marcar"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "marcar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rota }}",
+                    "rightValue": "limpar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "r5-limpar"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "limpar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -6064,
+        -112
+      ],
+      "id": "e0ef06d3-b065-4f58-a95c-dab547bbed8d",
+      "name": "Roteamento"
+    },
+    {
+      "parameters": {
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('Normalizar').item.json.conversa_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7ac41b7a-8b65-4c46-a102-4455d96e3528",
+      "name": "GET Historico",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5632,
+        224
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================\n// FORMATAR HISTÓRICO (rápido)\n// =============================\nconst response = $input.first().json;\nconst messages = response.payload ?? [];\n\n// filtra activity e mensagens vazias\nconst relevantes = [];\nfor (const m of messages) {\n  if (m?.message_type === 2) continue; // activity\n  const c = (m?.content ?? '').trim();\n  // mantém mesmo se vazio? aqui descarta vazio total\n  if (!c && !(m?.attachments?.length)) continue;\n  relevantes.push(m);\n}\n\n// últimas 30\nconst ultimas = relevantes.slice(-30);\n\n// helper: uma linha só (evita quebrar prompt)\nconst oneLine = (s) => String(s ?? '')\n  .replace(/\\r\\n/g, '\\n')\n  .replace(/\\n{3,}/g, '\\n\\n') // compacta excessos\n  .trim();\n\nconst linhas = [];\nfor (const m of ultimas) {\n  const senderType = (m?.sender?.type ?? '').toLowerCase(); // contact | user | agent_bot\n  const isPrivate = m?.private === true;\n  const isBot = senderType === 'agent_bot';\n\n  let autor;\n  if (isBot) autor = isPrivate ? '[Sistema]' : '[Clara]';\n  else if (senderType === 'contact') autor = '[Cliente]';\n  else if (senderType === 'user') autor = isPrivate ? '[Interno]' : '[Atendente]';\n  else autor = '[Sistema]';\n\n  // conteúdo\n  let texto = '';\n  const content = (m?.content ?? '').trim();\n  if (content) {\n    texto = oneLine(content);\n  } else if (m?.attachments?.length) {\n    texto = '[Anexo]';\n  } else {\n    continue;\n  }\n\n  const privTag = (isPrivate && !isBot) ? ' (privado)' : '';\n  linhas.push(`${autor}${privTag}: ${texto}`);\n}\n\n// monta histórico\nlet historico = linhas.join('\\n');\n\n// corta histórico se ficar grande (evita lentidão / token)\nconst MAX_CHARS = 6000;\nif (historico.length > MAX_CHARS) {\n  historico = historico.slice(-MAX_CHARS);\n}\n\n// pega pergunta atual do Normalizar (com first)\nconst norm = $('Normalizar').first()?.json ?? {};\nconst texto_atual = String(norm.texto || '').trim();\nconst nome_atendente = String(norm.nome_atendente || 'Atendente');\n\nconst prompt_copiloto = `${historico}\\n\\n---\\nPergunta de ${nome_atendente}: ${texto_atual}`;\n\nreturn [{\n  json: {\n    historico,\n    prompt_copiloto,\n    total_mensagens: ultimas.length,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5088,
+        208
+      ],
+      "id": "cd82d7e6-07c7-428e-9f58-94e259349c2c",
+      "name": "Formatar Historico"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('Webhook').item.json.body.conversation.id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.mensagem, message_type: \"outgoing\", private: true, content_type: \"text\" }) }}",
+        "options": {}
+      },
+      "id": "b9ee00d5-5698-4ba1-80af-def63cd31d5a",
+      "name": "Envia Nota Privada Midia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4784,
+        -384
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IPAsWeAlLuob4Lsy",
+          "name": "SPX - Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rota_final }}",
+                    "rightValue": "clara",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "rf1-clara"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "clara"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.rota_final }}",
+                    "rightValue": "marcar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "rf2-marcar"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "marcar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -4384,
+        -192
+      ],
+      "id": "a4771cd1-77b3-4c92-a646-51771a72d91e",
+      "name": "Rota Final"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -4352,
+        432
+      ],
+      "id": "923b42e1-2fec-4837-a6a2-9242f77c551b",
+      "name": "Think Copiloto"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalizar').item.json.tipo_conteudo }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "m1-audio"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Normalizar').item.json.tipo_conteudo }}",
+                    "rightValue": "imagem",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "m2-imagem"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagem"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -5504,
+        -224
+      ],
+      "id": "49209cdb-6fb4-4a26-9852-e773195168cb",
+      "name": "Tipo Mídia"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// PREPARAR ROTA FINAL — Code Node (n8n)\n// Projeto Tozi Imobiliária\n// Unifica saída de mídia processada e fallback\n// Roda ANTES do Switch Rota Final\n// ============================================================\n\nconst normalizar = $('Normalizar').first().json;\n\nlet texto_para_agente;\n\ntry {\n  // Se passou por processamento (audio/imagem), pega texto_final\n  texto_para_agente = $('Formatar Mídia').first().json.texto_final;\n} catch (e) {\n  // Se veio do fallback (contato, localização, vídeo, documento, sticker)\n  texto_para_agente = normalizar.texto_humano;\n}\n\nreturn {\n  json: {\n    texto_para_agente,\n    rota_final: normalizar.rota_final,\n    conversa_id: normalizar.conversa_id,\n    contato_id: normalizar.contato_id,\n    nome_cliente: normalizar.nome_cliente,\n    tipo_conteudo: normalizar.tipo_conteudo,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4560,
+        -176
+      ],
+      "id": "2b2dd13f-f6b3-484e-a462-024734d67843",
+      "name": "Prepara Dados Pos-Midia"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// FORMATAR MÍDIA v2 — Code Node (n8n)\n// Projeto Tozi Imobiliária\n// Roda DEPOIS do processamento (transcrição, análise)\n// e ANTES do HTTP Request da nota privada\n// ============================================================\nconst normalizar = $('Normalizar').first().json;\nconst tipo = normalizar.tipo_conteudo;\nconst legenda = normalizar.legenda || null;\nconst autor_legivel = normalizar.autor === 'cliente' ? 'cliente' : 'atendente';\n\nconst input = $input.first().json;\n\nlet mensagem = '';\nlet texto_processado = '';\n\nif (tipo === 'audio') {\n  const transcricao = input.text || '[Transcrição indisponível]';\n  const duracao = input.usage?.seconds ? ` (${input.usage.seconds}s)` : '';\n  texto_processado = transcricao;\n  mensagem = `📎 Transcrição de áudio do ${autor_legivel}${duracao}:\\n\\n${transcricao}`;\n\n} else if (tipo === 'imagem') {\n  const descricao = input.content || input.text || '[Descrição indisponível]';\n  texto_processado = descricao;\n  mensagem = `📎 Descrição de imagem do ${autor_legivel}:\\n\\n${descricao}`;\n  if (legenda) {\n    mensagem += `\\nLegenda: ${legenda}`;\n    texto_processado += `\\nLegenda: ${legenda}`;\n  }\n\n} else {\n  texto_processado = normalizar.texto_humano;\n  mensagem = `📎 ${texto_processado}`;\n}\n\nreturn {\n  json: {\n    mensagem,\n    texto_final: texto_processado,\n    tipo_conteudo: tipo,\n    rota_final: normalizar.rota_final,\n    conversa_id: normalizar.conversa_id,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4960,
+        -384
+      ],
+      "id": "b8229246-9664-46bd-966b-72ec698e76ea",
+      "name": "Formatar Mídia"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ec48b74-3353-4e4a-9e31-fe8c4c6d0af1",
+              "name": "mensagem",
+              "value": "={{ $json.texto_para_agente }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4112,
+        -480
+      ],
+      "id": "7d49f0dd-9592-4f45-af98-8b2e1a5b295e",
+      "name": "Ajusta Campos Pos-Midia"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensagem }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Você é a Clara, pré-atendimento da Tozi Imóveis (Sinop/MT) no WhatsApp.\n\n## Seu papel\n\nRecepcionar o cliente, entender o que ele precisa e preparar o terreno para o time que vai atendê-lo. Você é a porta de entrada — acolhe, conversa, coleta contexto e direciona.\n\n## Como se comportar\n\nSeja humana. Responda como uma pessoa real responderia: curto, direto, simpática. Não soe como menu de opções ou robô corporativo.\n\n- Respostas de 1-3 frases\n- Uma pergunta por vez\n- Sem formalidade forçada nem frases feitas\n- Emoji só se fizer sentido natural (máximo 1)\n- Adapte seu tom ao tom do cliente\n- Responda o que o cliente perguntar antes de fazer sua pergunta\n- Nunca mande duas perguntas na mesma mensagem\n\n## Seja concisa\n\nSe o cliente já disse algo, siga em frente. Não repita de volta o que ele acabou de falar.\n\nQuando o cliente já deu todas as informações, sua resposta pode ser só uma confirmação curta e o aviso de que passou pro time.\n\n## Fale como gente\n\nVocê conversa, não gera relatório. Sua linguagem deve soar como uma pessoa real digitando no WhatsApp.\n\n## Só fale do que você faz\n\nVocê passa pro time. O time é quem busca imóveis, mostra opções, agenda visitas. Não prometa nada além de passar pro time.\n\n## Dois modos de operação\n\nSeu comportamento muda conforme o horário. Olhe a seção \"Data e hora\" para saber se está dentro ou fora do expediente.\n\n### Dentro do horário comercial\n\nO time está disponível. Seu objetivo é entender o motivo do contato com agilidade e atribuir.\n\n- Não prolongue a conversa além do necessário\n- Assim que entender o que o cliente precisa, confirme o nome e atribua\n- Para suporte (boleto, contrato, manutenção): colete o problema e atribua rápido\n- Para comercial (locação, venda, captação): entenda o básico e atribua — o time aprofunda\n\n### Fora do horário comercial\n\nNinguém vai atender agora. Você tem tempo. Use isso a favor do time.\n\n- Converse com mais calma, sem pressa de atribuir\n- Para suporte: colete o problema, confirme o nome, atribua e avise que retornam no próximo expediente\n- Para comercial: aproveite para qualificar mais o lead — cada informação extra que você coletar é munição para o vendedor\n- Pergunte sobre preferências, orçamento, região, quantidade de quartos, prazo de mudança, se tem pets, o que é importante pra ele\n- Qualificação progressiva: uma pergunta por vez, sem parecer formulário\n- Quando sentir que coletou o suficiente (ou o cliente não quer mais conversar), confirme o nome e atribua\n\nO objetivo fora do horário: quando o time abrir de manhã e pegar essa conversa, já ter um dossiê rico do que o cliente procura.\n\n## Confirmação de nome\n\nO nome disponível no contexto vem do WhatsApp — pode ser apelido, abreviado, ou nome de empresa. Antes de chamar o atribuidor, confirme o nome real do cliente de forma natural.\n\nSe o cliente já se apresentou com nome completo na conversa, não precisa perguntar de novo.\n\n## Identificação de momento\n\nLeia o contexto antes de agir.\n\n**Conversa social** — cliente só cumprimentou, não mencionou nada específico. Cumprimente de volta e pergunte como pode ajudar. Não assuma que ele quer imóvel.\n\n**Interesse vago** — cliente mencionou algo como \"quero ver umas casas\" ou \"preciso de ajuda\". Explore sutilmente o que ele busca antes de categorizar.\n\n**Interesse claro** — cliente disse o que quer (\"quero alugar uma casa\", \"meu boleto não chegou\"). Entre no modo de coleta adequado ao tipo.\n\n## O que você faz\n\n1. **Acolhe** — responde saudações naturalmente\n2. **Esclarece** — responde dúvidas simples sobre a empresa consultando a FAQ\n3. **Qualifica** — coleta informações relevantes sobre a demanda do cliente\n4. **Confirma** — verifica o nome real do cliente antes de encaminhar\n5. **Encaminha** — atribui o atendimento para o time continuar\n\n## O que você NÃO faz\n\n- Não busca imóveis\n- Não agenda visitas\n- Não negocia valores\n- Não resolve suporte (boletos, contratos, manutenção)\n- Não promete prazos\n- Não pede documentos ou dados sensíveis\n- Não inventa informações que não estão na FAQ\n\n## Coleta por tipo de demanda\n\n### Comercial (locação, venda, captação)\n\nInformações valiosas para o time — colete o que conseguir naturalmente:\n\n- O que procura (casa, apartamento, kitnet, terreno, sala comercial)\n- Finalidade (alugar, comprar, anunciar imóvel próprio)\n- Região ou bairro de preferência\n- Faixa de valor\n- Quantidade de quartos\n- Se tem pets\n- Prazo (urgente, sem pressa, mês que vem)\n- Qualquer preferência espontânea do cliente\n\nDentro do horário: colete o básico (o que procura + 1 ou 2 detalhes) e atribua.\nFora do horário: vá mais fundo, uma pergunta por vez.\n\n### Suporte (boleto, contrato, manutenção, desocupação)\n\n- Qual o problema\n- Se mencionou, o endereço do imóvel\n\nColete rápido e atribua. Suporte não precisa de qualificação extensa.\n\n### Dúvida sobre a empresa\n\nConsulte a FAQ e responda. Se a FAQ não tiver a resposta, diga que o time pode confirmar e atribua.\n\n## Contexto disponível\n\nNome do cliente (WhatsApp): {{ $('Normalizar').first().json.nome_cliente || 'Não identificado' }}\nAtribuído à: {{ $('Normalizar').first().json.nome_atendente || 'Ninguém' }}\nResumo prévio: {{ $('Normalizar').first().json.custom_attributes.resumo || 'Sem resumo' }}\n\nSe já houver resumo prévio, leve em conta — não faça o cliente repetir informação.\n\n## Tools\n\n### faq_tozi\n\nConsulta a base de conhecimento da Tozi (processos, documentação, regras, horários, endereço, serviços).\n\nUse quando o cliente perguntar algo sobre a empresa que você não tem certeza. Se a FAQ não tiver resposta, diga que o time confirma.\n\n### atribuir_atendimento\n\nSubagente que enriquece e atribui a conversa para o time.\n\nChame em linguagem natural dizendo o que o cliente quer. Inclua o nome confirmado.\n\nQuanto mais contexto você passar, melhor para o time.\n\n**Quando usar:**\n- Dentro do horário: assim que entender o motivo do contato e confirmar o nome\n- Fora do horário: quando tiver coletado informação suficiente e confirmado o nome\n- Suporte: sempre rápido, independente do horário\n\n**Quando NÃO usar:**\n- Se o campo \"Atribuído à\" já mostrar alguém — não atribua de novo\n- Se ainda não entendeu o motivo do contato\n- Se ainda não confirmou o nome do cliente\n\n## Sobre a atribuição\n\nSempre que atribuir, avise o cliente de forma natural e curta.\n\nDentro do horário: avise que vai passar pro time.\nFora do horário: avise que o time retorna no próximo expediente, sendo específica com a data/hora da próxima abertura.\n\n## Informações da empresa\n\n- **Horário:** Seg-Sex 7:30-11:30 e 13:30-17:30 | Sáb 9:00-11:30\n- **Endereço:** Av. das Figueiras, 3385 - Setor Comercial, Sinop/MT\n- **Telefone:** (66) 3531-5500\n- **Site:** www.tozisinop.com.br\n\n## Data e hora\n\n{{\n  (() => {\n    const now = DateTime.now();\n    const fmtNow = 'dd/LL/yyyy HH:mm:ss';\n    const MIN = (h, m) => h * 60 + m;\n\n    const schedule = {\n      1: [[MIN(7,30), MIN(11,30)], [MIN(13,30), MIN(17,30)]],\n      2: [[MIN(7,30), MIN(11,30)], [MIN(13,30), MIN(17,30)]],\n      3: [[MIN(7,30), MIN(11,30)], [MIN(13,30), MIN(17,30)]],\n      4: [[MIN(7,30), MIN(11,30)], [MIN(13,30), MIN(17,30)]],\n      5: [[MIN(7,30), MIN(11,30)], [MIN(13,30), MIN(17,30)]],\n      6: [[MIN(9,0),  MIN(11,30)]],\n      7: []\n    };\n\n    const weekdayName = (w) => ({1:'Segunda',2:'Terça',3:'Quarta',4:'Quinta',5:'Sexta',6:'Sábado',7:'Domingo'})[w] || '';\n\n    const minutesNow = now.hour * 60 + now.minute;\n    const todaysIntervals = schedule[now.weekday] || [];\n    const isOpenNow = todaysIntervals.some(([start, end]) => minutesNow >= start && minutesNow < end);\n\n    const makeDateTimeAt = (baseDay, startMin) => {\n      const h = Math.floor(startMin / 60);\n      const m = startMin % 60;\n      return baseDay.set({ hour: h, minute: m, second: 0, millisecond: 0 });\n    };\n\n    const findNextOpening = () => {\n      for (const [start] of todaysIntervals) {\n        if (minutesNow < start) return makeDateTimeAt(now, start);\n      }\n      for (let i = 1; i <= 14; i++) {\n        const day = now.plus({ days: i }).startOf('day');\n        const intervals = schedule[day.weekday] || [];\n        if (intervals.length > 0) return makeDateTimeAt(day, intervals[0][0]);\n      }\n      return null;\n    };\n\n    const nextOpening = isOpenNow ? (() => {\n      for (const [start, end] of todaysIntervals) {\n        if (minutesNow >= start && minutesNow < end) {\n          const idx = todaysIntervals.findIndex(i => i[0] === start && i[1] === end);\n          const nextToday = todaysIntervals[idx + 1]?.[0];\n          if (nextToday != null) return makeDateTimeAt(now, nextToday);\n          return findNextOpening();\n        }\n      }\n      return findNextOpening();\n    })() : findNextOpening();\n\n    const formatNextHuman = (dt) => {\n      if (!dt) return '';\n      const timeStr = dt.toFormat('HH:mm');\n      const today = now.startOf('day');\n      const tomorrow = today.plus({ days: 1 });\n      if (dt.hasSame(today, 'day')) return `hoje às ${timeStr}`;\n      if (dt.hasSame(tomorrow, 'day')) return `amanhã às ${timeStr}`;\n      return `${weekdayName(dt.weekday)} às ${timeStr}`;\n    };\n\n    const statusLine = isOpenNow ? '✅ Dentro do horário' : '⛔ Fora do horário';\n    const lines = [`Agora: ${now.toFormat(fmtNow)}`, statusLine];\n    if (!isOpenNow) lines.push(`Próximo: ${formatNextHuman(nextOpening)}`);\n    return lines.join('\\n');\n  })()\n}}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -3328,
+        -608
+      ],
+      "id": "da7272ca-a348-4b2e-be63-b7d251ea7865",
+      "name": "Agente Clara"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"messages\": {\n      \"type\": \"array\",\n      \"description\": \"Mensagens para enviar ao cliente. Use 1 mensagem quando for curto, 2 quando precisar responder algo + avisar sobre o time. Máximo 2.\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"minItems\": 1,\n      \"maxItems\": 2\n    }\n  },\n  \"required\": [\"messages\"]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2016,
+        -416
+      ],
+      "id": "2bb6e2f1-1868-4c9e-bf23-2a5c644aaae2",
+      "name": "Parser JSON Mensagens"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2016,
+        -240
+      ],
+      "id": "b3c8ac11-acd1-4d34-9ab3-4c8c8d7433fa",
+      "name": "LLM Parser",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# Humanizador — Formatação para WhatsApp\n\nVocê recebe a resposta de um agente e formata para envio no WhatsApp.\n\n## Seu papel\n\nTransformar a resposta em mensagens curtas, naturais e adequadas para WhatsApp. Você não muda o conteúdo — apenas ajusta a forma.\n\n## Regras de formatação\n\n- Quebre textos longos em mensagens separadas (máximo 2 mensagens)\n- Cada mensagem deve ter no máximo 3 frases\n- Remova formalidades excessivas\n- Mantenha o tom da resposta original\n- Não adicione informação que não estava na resposta\n- Não remova informação importante\n- Emoji só se já tinha na resposta original (máximo 1)\n\n## Quando quebrar em 2 mensagens\n\n- Quando a resposta tiver duas partes distintas (ex: resposta + aviso de transferência)\n- Quando uma única mensagem ficaria com mais de 3 frases\n- Quando melhorar a legibilidade\n\n## Quando usar 1 mensagem\n\n- Respostas curtas e diretas\n- Saudações simples\n- Perguntas únicas\n\n## Output\n\nResponda sempre em JSON:\n\n{\n  \"messages\": [\"mensagem 1\", \"mensagem 2\"]\n}\n\nUse array com 1 ou 2 strings. Máximo 2 mensagens."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -2080,
+        -624
+      ],
+      "id": "733a3eef-90d5-4816-a511-cf65faac1eee",
+      "name": "Humanizador Clara"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2160,
+        -416
+      ],
+      "id": "4281d5a3-066b-41fa-ab6d-0eb19a9dc11a",
+      "name": "LLM Humanizador",
+      "credentials": {
+        "openAiApi": {
+          "id": "QJAqRQc73R6XEx3L",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/contacts/{{ $('Normalizar').item.json.contato_id }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"labels\": {{ JSON.stringify([...new Set([...$('Normalizar').item.json.labels, 'atendimento'])]) }}\n}",
+        "options": {}
+      },
+      "id": "8be4f5ae-9c59-45cf-9632-2febba8cee44",
+      "name": "Adiciona Label (pos-marcar)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5440,
+        416
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/contacts/{{ $('Normalizar').item.json.contato_id }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"labels\": []\n}",
+        "options": {}
+      },
+      "id": "75f4441f-c8ba-4bd0-8906-5a7f1a6e8c54",
+      "name": "Remove Label (pos-limpar)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5440,
+        608
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4271b430-3ccb-4ee1-af14-b160ddbfce85",
+              "leftValue": "={{ $json.body.conversation?.id || $json.body.id }}",
+              "rightValue": 2159,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -6496,
+        -48
+      ],
+      "id": "f4686612-c3b5-4acb-8ab7-86476a063368",
+      "name": "Filtro Teste (so Paulo)",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('Normalizar').first().json.conversa_id }}/custom_attributes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_attributes\": {\n    \"atendimento\": true\n  }\n}",
+        "options": {}
+      },
+      "id": "46f258ae-70a6-4672-bf89-a38617653732",
+      "name": "Set Atendimento True (pos-clara)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4144,
+        -176
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/contacts/{{ $('Normalizar').first().json.contato_id }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"labels\": {{ JSON.stringify([...new Set([...$('Normalizar').first().json.labels, 'atendimento'])]) }}\n}",
+        "options": {}
+      },
+      "id": "15b85b9e-2702-4fa1-bf00-7f01972e0291",
+      "name": "Adiciona Label (pos-clara)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3968,
+        -176
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 1. ENTRADA\n\nWebhook → Filtro → Normalizar → Roteamento\n\n**Rotas:** clara, midia, copiloto, marcar, limpar, ignorar",
+        "height": 592,
+        "width": 940
+      },
+      "id": "sticky-entrada",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6784,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. BUFFER (Debounce)\n\nAgrupa mensagens do cliente.\nAguarda 15s antes de chamar a Clara.",
+        "height": 440,
+        "width": 1832,
+        "color": 2
+      },
+      "id": "sticky-buffer",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5568,
+        -1104
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. MIDIA\n\nAudio → Whisper\nImagem → GPT Vision\n\nResultado salvo como nota privada.",
+        "height": 668,
+        "width": 1828,
+        "color": 7
+      },
+      "id": "sticky-midia",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5568,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 4. AGENTE CLARA\n\nPre-atendimento: recepciona, qualifica, confirma nome.\n\n**Subagente:** Atribuidor (busca imoveis, atribui pra Camila)",
+        "height": 848,
+        "width": 1232,
+        "color": 3
+      },
+      "id": "sticky-clara",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3584,
+        -816
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 5. HUMANIZADOR\n\nFormata resposta da Clara para WhatsApp.\nSepara em mensagens curtas.",
+        "height": 844,
+        "width": 1320,
+        "color": 5
+      },
+      "id": "sticky-humanizador",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2304,
+        -816
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 6. COPILOTO\n\nAssistente interno via #tozi.\nBusca historico, responde no privado.\nInvisivel pro cliente.",
+        "height": 774,
+        "width": 1480,
+        "color": 6
+      },
+      "id": "sticky-copiloto",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5216,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 7. CONTROLE\n\nMarca/desmarca atendimento.\nAdiciona/remove labels.",
+        "height": 788,
+        "width": 522
+      },
+      "id": "sticky-controle",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5760,
+        64
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8nwebhook.simplexsolucoes.com.br",
+            "user-agent": "rest-client/2.1.0 (linux x86_64) ruby/3.4.4p34",
+            "content-length": "4021",
+            "accept": "application/json",
+            "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "baggage": "sentry-trace_id=e414b9416f0b4c8da3ca4ccfe17f05f9,sentry-environment=production,sentry-release=ee4328a2bf6f525804d526b628357d5fbfc68972,sentry-public_key=11b627471e7aa2791c675702003d2c57",
+            "content-type": "application/json",
+            "sentry-trace": "e414b9416f0b4c8da3ca4ccfe17f05f9-a4c4ca2304ae4e43",
+            "x-forwarded-for": "192.168.8.225",
+            "x-forwarded-host": "n8nwebhook.simplexsolucoes.com.br",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "5ec3c495738d",
+            "x-real-ip": "192.168.8.225"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "account": {
+              "id": 6,
+              "name": "Tozi imóveis"
+            },
+            "additional_attributes": {},
+            "content_attributes": {},
+            "content_type": "text",
+            "content": "O que responder? #tozi",
+            "conversation": {
+              "additional_attributes": {},
+              "can_reply": true,
+              "channel": "Channel::Whatsapp",
+              "contact_inbox": {
+                "id": 34401,
+                "contact_id": 10685,
+                "inbox_id": 91,
+                "source_id": "5566996350491",
+                "created_at": "2026-01-21T10:29:23.881-04:00",
+                "updated_at": "2026-01-21T10:29:23.881-04:00",
+                "hmac_verified": false,
+                "pubsub_token": "D6f7XQm2483xzBmtqSWxeXf1"
+              },
+              "id": 2159,
+              "inbox_id": 91,
+              "messages": [
+                {
+                  "id": 632224,
+                  "content": "?",
+                  "account_id": 6,
+                  "inbox_id": 91,
+                  "conversation_id": 2159,
+                  "message_type": 0,
+                  "created_at": 1770650697,
+                  "updated_at": "2026-02-09T11:24:57.181-04:00",
+                  "private": false,
+                  "status": "sent",
+                  "source_id": "wamid.HBgMNTU2Njk2MzUwNDkxFQIAEhgWM0VCMEFENDk1MDY3REY1MTRFQzA4MQA=",
+                  "content_type": "text",
+                  "content_attributes": {},
+                  "sender_type": "Contact",
+                  "sender_id": 10685,
+                  "external_source_ids": {},
+                  "additional_attributes": {},
+                  "processed_message_content": "?",
+                  "sentiment": {},
+                  "team_id": null,
+                  "forwarded": false,
+                  "forwarded_from_message_id": null,
+                  "starred": false,
+                  "conversation": {
+                    "assignee_id": 66,
+                    "unread_count": 0,
+                    "last_activity_at": 1770651376,
+                    "contact_inbox": {
+                      "source_id": "5566996350491"
+                    }
+                  },
+                  "sender": {
+                    "additional_attributes": {
+                      "avatar_url_hash": "e4aada103251fdc59448fccf450aaa18cf3991bad453752056f9484dd6f13a76",
+                      "last_avatar_sync_at": "2025-10-30T18:19:55Z"
+                    },
+                    "custom_attributes": {
+                      "resumo": "TESTE",
+                      "intencao": null,
+                      "atendimento": null,
+                      "waha_whatsapp_jid": "556696350491@c.us",
+                      "waha_whatsapp_lid": "115036504772668@lid",
+                      "waha_whatsapp_chat_id": "556696350491@c.us"
+                    },
+                    "email": null,
+                    "id": 10685,
+                    "identifier": "556696350491@s.whatsapp.net",
+                    "name": "Paulo Seze",
+                    "phone_number": "+5566996350491",
+                    "thumbnail": "https://chat.simplexsolucoes.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaFRmIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--55645e625487d19804dab00a08f4d5a9801d4512/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--0a79114faaf6b4a1a79abc1c4321cf83751ac09c/521588501_1330818815213928_5857102233182530082_n.jpg",
+                    "blocked": false,
+                    "type": "contact"
+                  }
+                }
+              ],
+              "labels": [],
+              "meta": {
+                "sender": {
+                  "additional_attributes": {
+                    "avatar_url_hash": "e4aada103251fdc59448fccf450aaa18cf3991bad453752056f9484dd6f13a76",
+                    "last_avatar_sync_at": "2025-10-30T18:19:55Z"
+                  },
+                  "custom_attributes": {
+                    "resumo": "TESTE",
+                    "intencao": null,
+                    "atendimento": null,
+                    "waha_whatsapp_jid": "556696350491@c.us",
+                    "waha_whatsapp_lid": "115036504772668@lid",
+                    "waha_whatsapp_chat_id": "556696350491@c.us"
+                  },
+                  "email": null,
+                  "id": 10685,
+                  "identifier": "556696350491@s.whatsapp.net",
+                  "name": "Paulo Seze",
+                  "phone_number": "+5566996350491",
+                  "thumbnail": "https://chat.simplexsolucoes.com.br/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaFRmIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--55645e625487d19804dab00a08f4d5a9801d4512/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJYW5CbkJqb0dSVlE2RTNKbGMybDZaVjkwYjE5bWFXeHNXd2RwQWZvdyIsImV4cCI6bnVsbCwicHVyIjoidmFyaWF0aW9uIn19--0a79114faaf6b4a1a79abc1c4321cf83751ac09c/521588501_1330818815213928_5857102233182530082_n.jpg",
+                  "blocked": false,
+                  "type": "contact"
+                },
+                "assignee": {
+                  "id": 66,
+                  "name": "Camila Schlindvein",
+                  "available_name": "Camila Schlindvein",
+                  "avatar_url": "",
+                  "type": "user",
+                  "availability_status": null,
+                  "thumbnail": ""
+                },
+                "assignee_type": "User",
+                "team": null,
+                "hmac_verified": false
+              },
+              "status": "open",
+              "custom_attributes": {
+                "atendimento": true
+              },
+              "snoozed_until": null,
+              "unread_count": 0,
+              "first_reply_created_at": "2026-01-21T14:20:50.983-04:00",
+              "priority": null,
+              "waiting_since": 1770650644,
+              "agent_last_seen_at": 1770651376,
+              "contact_last_seen_at": 0,
+              "last_activity_at": 1770651376,
+              "timestamp": 1770651376,
+              "created_at": 1769015824,
+              "updated_at": 1770651376.61335
+            },
+            "created_at": "2026-02-09T11:36:16.607-04:00",
+            "id": 632309,
+            "inbox": {
+              "id": 91,
+              "name": "[TOZI] FIXO"
+            },
+            "message_type": "outgoing",
+            "private": true,
+            "sender": {
+              "id": 54,
+              "name": "Paulo",
+              "email": "phseze@gmail.com",
+              "type": "user"
+            },
+            "source_id": null,
+            "event": "message_created"
+          },
+          "webhookUrl": "https://n8nwebhook.simplexsolucoes.com.br/webhook/26c2595e-4c8f-4d89-8851-301706ad0c20",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filtro Teste (so Paulo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Copiloto": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Copiloto",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_localizacao": {
+      "ai_tool": [
+        [
+          {
+            "node": "Atribuidor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_imoveis": {
+      "ai_tool": [
+        [
+          {
+            "node": "Atribuidor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "faq_tozi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Clara",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think Clara": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Clara",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Clara": {
+      "ai_embedding": [
+        [
+          {
+            "node": "faq_tozi",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separa Mensagens": {
+      "main": [
+        [
+          {
+            "node": "Loop Enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Enviar": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envia Mensagem Clara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Mensagem Clara": {
+      "main": [
+        [
+          {
+            "node": "Loop Enviar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Agente Copiloto": {
+      "main": [
+        [
+          {
+            "node": "Envia Resposta Copiloto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "atribuir_atendimento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Atribuidor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar": {
+      "main": [
+        [
+          {
+            "node": "Roteamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Atendimento False": {
+      "main": [
+        [
+          {
+            "node": "Remove Label (pos-limpar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Atendimento True": {
+      "main": [
+        [
+          {
+            "node": "Adiciona Label (pos-marcar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "Whisper Transcricao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whisper Transcricao": {
+      "main": [
+        [
+          {
+            "node": "Formatar Mídia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vision Analise Imagem": {
+      "main": [
+        [
+          {
+            "node": "Formatar Mídia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buffer Push": {
+      "main": [
+        [
+          {
+            "node": "Aguarda Debounce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buffer Get": {
+      "main": [
+        [
+          {
+            "node": "Verifica Buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buffer Clear": {
+      "main": [
+        [
+          {
+            "node": "Prepara Input Clara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguarda Debounce": {
+      "main": [
+        [
+          {
+            "node": "Buffer Get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifica Buffer": {
+      "main": [
+        [
+          {
+            "node": "Buffer Clear",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Prepara Input Clara": {
+      "main": [
+        [
+          {
+            "node": "Agente Clara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Clara": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Clara",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria Clara": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente Clara",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Atribuidor": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Atribuidor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_localizacao (copiloto)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Copiloto",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_imoveis (copiloto)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Copiloto",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Resposta Copiloto": {
+      "main": [
+        []
+      ]
+    },
+    "Atribuidor": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Clara",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "faq_tozi (copiloto)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Copiloto",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Copiloto": {
+      "ai_embedding": [
+        [
+          {
+            "node": "faq_tozi (copiloto)",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roteamento": {
+      "main": [
+        [
+          {
+            "node": "Buffer Push",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tipo Mídia",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET Historico",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Atendimento True",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Atendimento False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Historico": {
+      "main": [
+        [
+          {
+            "node": "Formatar Historico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Historico": {
+      "main": [
+        [
+          {
+            "node": "Agente Copiloto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Nota Privada Midia": {
+      "main": [
+        [
+          {
+            "node": "Prepara Dados Pos-Midia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rota Final": {
+      "main": [
+        [
+          {
+            "node": "Ajusta Campos Pos-Midia",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Atendimento True (pos-clara)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think Copiloto": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Copiloto",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo Mídia": {
+      "main": [
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vision Analise Imagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepara Dados Pos-Midia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepara Dados Pos-Midia": {
+      "main": [
+        [
+          {
+            "node": "Rota Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Mídia": {
+      "main": [
+        [
+          {
+            "node": "Envia Nota Privada Midia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ajusta Campos Pos-Midia": {
+      "main": [
+        [
+          {
+            "node": "Agente Clara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Clara": {
+      "main": [
+        [
+          {
+            "node": "Humanizador Clara",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser JSON Mensagens": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Humanizador Clara",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Parser": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Parser JSON Mensagens",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Humanizador": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Humanizador Clara",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Humanizador Clara": {
+      "main": [
+        [
+          {
+            "node": "Separa Mensagens",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro Teste (so Paulo)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Atendimento True (pos-clara)": {
+      "main": [
+        [
+          {
+            "node": "Adiciona Label (pos-clara)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "America/Manaus",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "1f0bda57-d888-4541-a32e-d6b8f05a98ab",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7a12360371cd82993f73405f220eb9edccfa0db9213a4df540b65c6b7e870c14"
+  },
+  "id": "lEytGA2yzQq606IA",
+  "tags": [
+    {
+      "updatedAt": "2025-07-29T18:18:04.860Z",
+      "createdAt": "2025-07-29T18:18:04.860Z",
+      "id": "wt31UZ7lPP6mqE2I",
+      "name": "Aprovado"
+    }
+  ]
+}

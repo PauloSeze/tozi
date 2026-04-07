@@ -1,0 +1,207 @@
+{
+  "name": "Tozi TOOL - Buscar imóveis",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"query\": {\n    \"type\": \"object\",\n    \"description\": \"Query completa para API Vista\",\n    \"required\": [\"filter\", \"advFilter\", \"order\", \"paginacao\"]\n  }\n}"
+      },
+      "id": "32f5c102-a752-41d3-8019-33df5e87c276",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -32,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0081dfa2-5575-4efc-a7c6-4a89f36f3bec",
+              "name": "fields",
+              "value": "=[\n  \"Codigo\",\n  \"Referencia\",\n  \"ImoCodigo\",\n  \"ImoReferenciaExterna\",\n  \"Finalidade\",\n  \"TipoImovel\",\n  \"Dormitorios\",\n  \"Bairro\",\n  \"Cidade\",\n  \"UF\",\n  \"TipoEndereco\",\n  \"Endereco\",\n  \"Numero\",\n  \"ValorLocacao\",\n  \"Latitude\",\n  \"Longitude\",\n  \"TituloSite\",\n  \"ExibirNoSite\"\n]",
+              "type": "array"
+            },
+            {
+              "id": "aeda5c01-1d6c-4ba1-a9f0-1dbaabb41cf8",
+              "name": "filter",
+              "value": "={{ $json.query.filter }}",
+              "type": "object"
+            },
+            {
+              "id": "73fc1963-1ca8-4191-9dfe-25fe6e4e82e3",
+              "name": "advFilter",
+              "value": "={{ $json.query.advFilter }}",
+              "type": "object"
+            },
+            {
+              "id": "d9f76957-17bf-412f-843b-80a7ab87d7d1",
+              "name": "order",
+              "value": "={{ $json.query.order }}",
+              "type": "object"
+            },
+            {
+              "id": "3d517568-4d1a-4c91-b4ce-6fde7818f85f",
+              "name": "paginacao",
+              "value": "={{ $json.query.paginacao }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        368
+      ],
+      "id": "e854bcf7-b13d-46bf-a8f5-ff294d3b8a5b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://toz19328-rest.vistahost.com.br/imoveis/listar",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "pesquisa",
+              "value": "={{ JSON.stringify($json) }}"
+            },
+            {
+              "name": "showtotal",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        368
+      ],
+      "id": "6372c6ee-2221-4c8d-b461-1d83534bfefd",
+      "name": "Vista - imoveis/listar",
+      "notesInFlow": true,
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "PYxEk4SyoSN8RT4h",
+          "name": "Vista - Tozi"
+        }
+      },
+      "notes": "Chama o endpoint do Vista com o objeto `pesquisa` montado."
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "=={{ \n  (() => {\n    const slug = (s) => String(s||'')\n      .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')\n      .toLowerCase().replace(/[^a-z0-9]+/g,'-')\n      .replace(/(^-|-$)/g,'');\n\n    const imoveis = Object.keys($json)\n      .filter(k => /^\\d+$/.test(k))\n      .map(k => {\n        const im = $json[k];\n        const titulo = im.TituloSite || `imovel-${im.Codigo || im.ImoCodigo || ''}`;\n        return {\n          ...im,\n          url: `https://www.toziimoveis.com.br/${slug(titulo)}-${slug(im.Cidade)},${im.ImoCodigo || im.Codigo}`\n        };\n      });\n\n    return { imoveis };\n  })()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        368
+      ],
+      "id": "db656035-2b7a-4aa1-92a3-8afc345cb6a6",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": {
+            "filter": {
+              "Cidade": "Sinop",
+              "Categoria": "Casa",
+              "Status": [
+                "like",
+                "%alug%"
+              ],
+              "ValorLocacao": [
+                "",
+                2000
+              ]
+            },
+            "advFilter": {},
+            "order": {
+              "Codigo": "desc"
+            },
+            "paginacao": {
+              "pagina": 1,
+              "quantidade": 5
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Vista - imoveis/listar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vista - imoveis/listar": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7c09dc26-c5a9-4389-929b-c476a18e61d4",
+  "meta": {
+    "instanceId": "7a12360371cd82993f73405f220eb9edccfa0db9213a4df540b65c6b7e870c14"
+  },
+  "id": "ZvrUozDnbEzRZfFs",
+  "tags": []
+}

@@ -1,0 +1,34 @@
+{
+  "event": "message_created",
+  "message_type": "incoming",
+  "private": false,
+  "content": "Oi, quero alugar uma casa",
+  "attachments": [],
+  "source_id": "wamid.ABGSOFkxNTg5",
+  "id": 592904,
+  "content_attributes": {},
+  "sender": {
+    "identifier": "556696350491@s.whatsapp.net",
+    "phone_number": "+5566996350491",
+    "name": "Paulo Seze",
+    "id": 10685,
+    "custom_attributes": {}
+  },
+  "conversation": {
+    "id": 2159,
+    "inbox_id": 91,
+    "status": "open",
+    "labels": ["atendimento"],
+    "custom_attributes": {
+      "resumo": "Cliente interessado em locação"
+    },
+    "contact_inbox": {
+      "source_id": "5566996350491"
+    },
+    "meta": {
+      "sender": {"name": "Paulo Seze", "id": 10685},
+      "assignee": null
+    },
+    "messages": []
+  }
+}

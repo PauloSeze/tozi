@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>SPXIA — Tozi Imobiliária — Planejamento de Projeto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafaf9;
+  --white:#ffffff;
+  --black:#111111;
+  --gray-900:#1a1a1e;
+  --gray-700:#3a3a3f;
+  --gray-500:#6b6b72;
+  --gray-300:#b0b0b6;
+  --gray-100:#ececee;
+  --red:#ED3237;
+  --red-light:#fef2f2;
+  --red-soft:rgba(237,50,55,0.08);
+  --blue:#2B435B;
+  --blue-light:#f0f4f8;
+  --green:#38a169;
+  --green-light:#f0fff4;
+  --font-display:'DM Serif Display',Georgia,serif;
+  --font-body:'Outfit',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+html{font-size:15px}
+body{font-family:var(--font-body);color:var(--gray-900);line-height:1.6;background:var(--white)}
+
+/* ================================================================
+   PAGE / SLIDE SYSTEM
+   ================================================================ */
+.slide{
+  width:210mm;min-height:297mm;
+  padding:50px 60px;
+  page-break-after:always;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.slide:last-child{page-break-after:auto}
+
+.slide::after{
+  content:'SPXIA — Tozi Imobiliária — Planejamento';
+  position:absolute;bottom:28px;left:60px;
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:var(--gray-300);letter-spacing:0.08em;
+}
+
+.slide-num{
+  position:absolute;bottom:28px;right:60px;
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:var(--gray-300);
+}
+
+/* ================================================================
+   COVER SLIDE
+   ================================================================ */
+.cover{
+  background:var(--gray-900);color:var(--white);
+  justify-content:center;align-items:flex-start;
+  padding:60px 70px;
+}
+.cover::after{color:rgba(255,255,255,0.2) !important}
+.cover-logo{height:36px;margin-bottom:60px;opacity:0.9}
+.cover-label{
+  font-family:var(--font-mono);font-size:0.65rem;font-weight:500;
+  color:var(--red);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.cover-label::before{content:'';width:24px;height:1.5px;background:var(--red)}
+.cover h1{
+  font-family:var(--font-display);font-size:3.2rem;
+  font-weight:400;line-height:1.08;margin-bottom:10px;
+}
+.cover h1 em{font-style:italic;color:var(--red)}
+.cover-sub{
+  font-size:1rem;color:rgba(255,255,255,0.5);
+  max-width:440px;margin:20px 0 50px;font-weight:300;line-height:1.7;
+}
+.cover-stats{
+  display:flex;gap:40px;padding-top:30px;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+.cover-stat-val{
+  font-family:var(--font-display);font-size:2rem;line-height:1;
+}
+.cover-stat-val span{color:var(--red)}
+.cover-stat-lbl{
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;
+  margin-top:4px;
+}
+.cover-bottom{
+  position:absolute;bottom:40px;left:70px;right:70px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
+.cover-author{font-family:var(--font-mono);font-size:0.65rem;color:rgba(255,255,255,0.35)}
+.cover-date{font-family:var(--font-mono);font-size:0.65rem;color:rgba(255,255,255,0.35)}
+
+/* ================================================================
+   CONTENT SLIDES
+   ================================================================ */
+.slide-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:28px;padding-bottom:14px;
+  border-bottom:1.5px solid var(--gray-100);
+}
+.slide-header-num{
+  font-family:var(--font-mono);font-size:0.6rem;font-weight:700;
+  color:var(--white);background:var(--red);
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+}
+.slide-header-text{
+  font-family:var(--font-mono);font-size:0.65rem;font-weight:600;
+  color:var(--gray-500);letter-spacing:0.08em;text-transform:uppercase;
+}
+
+.slide h2{
+  font-family:var(--font-display);font-size:1.9rem;
+  font-weight:400;line-height:1.15;margin-bottom:8px;
+}
+.slide h2 em{font-style:italic;color:var(--red)}
+.slide-intro{
+  font-size:0.85rem;color:var(--gray-500);max-width:460px;
+  margin-bottom:24px;line-height:1.7;font-weight:300;
+}
+
+/* ================================================================
+   TABLES
+   ================================================================ */
+table{
+  width:100%;border-collapse:collapse;
+  margin:8px 0 12px 0;font-size:0.72rem;
+}
+th{
+  background:var(--gray-900);color:var(--white);
+  padding:7px 10px;text-align:left;
+  font-family:var(--font-mono);font-size:0.62rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.05em;
+}
+td{
+  padding:6px 10px;border-bottom:1px solid var(--gray-100);
+  vertical-align:top;line-height:1.5;
+}
+tr:nth-child(even) td{background:var(--bg)}
+td strong{color:var(--gray-900)}
+
+/* ================================================================
+   PHASE HEADERS
+   ================================================================ */
+.phase-block{
+  page-break-inside:avoid;
+  margin-bottom:16px;
+}
+.phase-header{
+  background:var(--gray-900);color:var(--white);
+  padding:12px 18px;margin-bottom:8px;
+  border-left:4px solid var(--red);
+  border-radius:0 6px 6px 0;
+  page-break-after:avoid;
+}
+.phase-header h3{
+  font-family:var(--font-display);font-size:1.05rem;
+  font-weight:400;margin:0;line-height:1.3;
+}
+.phase-header .dates{
+  font-family:var(--font-mono);font-size:0.58rem;
+  color:rgba(255,255,255,0.45);margin-top:3px;
+  letter-spacing:0.03em;
+}
+
+/* ================================================================
+   MILESTONE & TRAINING BOXES
+   ================================================================ */
+.milestone-box{
+  background:var(--red-light);
+  border:1.5px solid rgba(237,50,55,0.15);
+  border-radius:6px;padding:8px 14px;margin:6px 0;
+  font-size:0.72rem;font-weight:600;color:var(--red);
+  display:flex;align-items:center;gap:8px;
+}
+.milestone-box::before{
+  content:'';width:8px;height:8px;border-radius:50%;
+  background:var(--red);flex-shrink:0;
+}
+
+.training-box{
+  background:var(--blue-light);
+  border-left:3px solid var(--blue);
+  border-radius:0 6px 6px 0;
+  padding:7px 14px;margin:6px 0;
+  font-size:0.68rem;color:var(--blue);line-height:1.5;
+}
+
+.note-box{
+  background:var(--green-light);
+  border-left:3px solid var(--green);
+  border-radius:0 6px 6px 0;
+  padding:7px 14px;margin:8px 0;
+  font-size:0.72rem;color:#276749;
+}
+
+/* ================================================================
+   CARDS & STATS
+   ================================================================ */
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.stat-card{
+  padding:18px 16px;border-radius:10px;text-align:center;
+  border:1px solid var(--gray-100);background:var(--white);
+}
+.stat-card-dark{
+  background:var(--gray-900);color:var(--white);border-color:transparent;
+}
+.stat-val{
+  font-family:var(--font-display);font-size:1.6rem;line-height:1;
+  color:var(--red);
+}
+.stat-card-dark .stat-val{color:var(--red)}
+.stat-lbl{
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;
+  margin-top:4px;
+}
+.stat-card-dark .stat-lbl{color:rgba(255,255,255,0.4)}
+
+/* ================================================================
+   RISK BADGES
+   ================================================================ */
+.risk-high{
+  display:inline-block;padding:1px 8px;border-radius:4px;font-size:0.62rem;
+  font-weight:600;background:var(--red-light);color:var(--red);
+}
+.risk-med{
+  display:inline-block;padding:1px 8px;border-radius:4px;font-size:0.62rem;
+  font-weight:600;background:#fffbeb;color:#b45309;
+}
+.risk-low{
+  display:inline-block;padding:1px 8px;border-radius:4px;font-size:0.62rem;
+  font-weight:600;background:var(--green-light);color:var(--green);
+}
+
+/* ================================================================
+   TIMELINE
+   ================================================================ */
+.timeline-box{
+  background:var(--gray-900);color:rgba(255,255,255,0.7);
+  padding:16px 20px;border-radius:8px;
+  font-family:var(--font-mono);font-size:0.52rem;
+  line-height:1.7;white-space:pre;margin:12px 0;
+  overflow-x:auto;
+}
+
+/* ================================================================
+   CLOSING SLIDE
+   ================================================================ */
+.closing{
+  background:var(--gray-900);color:var(--white);
+  justify-content:center;align-items:center;text-align:center;
+}
+.closing::after{color:rgba(255,255,255,0.2) !important}
+.closing .slide-num{color:rgba(255,255,255,0.2)}
+.closing h2{
+  font-family:var(--font-display);font-size:2.4rem;
+  font-weight:400;line-height:1.1;margin-bottom:12px;max-width:500px;
+}
+.closing h2 em{font-style:italic;color:var(--red)}
+.closing p{
+  font-size:0.9rem;color:rgba(255,255,255,0.4);
+  max-width:380px;margin:0 auto 40px;font-weight:300;
+}
+.closing-logo{height:28px;opacity:0.4}
+.closing-contact{
+  font-family:var(--font-mono);font-size:0.65rem;
+  color:rgba(255,255,255,0.25);margin-top:20px;
+}
+
+.spacer{flex:1}
+</style>
+</head>
+<body>
+
+<!-- ============================== SLIDE 1: CAPA ============================== -->
+<div class="slide cover">
+  <svg class="cover-logo" viewBox="0 0 1535.46 468.14" xmlns="http://www.w3.org/2000/svg" style="height:36px;shape-rendering:geometricPrecision">
+    <defs><style>.cl0{fill:#FEFEFE}.cl1{fill:#ED3237}</style></defs>
+    <g>
+      <path class="cl0" d="M811.25 206.4l99.57 0 0 7.36c0,17.2 1.97,32.12 6.01,44.87 20.2,41.34 50.98,61.96 92.32,61.96l1.14 0 2.49 -2.38 0 -89.94c0,-25.08 -10.98,-47.77 -32.85,-67.97 21.86,-20.83 32.85,-42.28 32.85,-64.35l0 -93.46 -2.49 -2.49c-13.68,0 -27.87,3.21 -42.48,9.74 -38.02,17 -56.99,49.43 -56.99,97.09l0 7.36 -99.57 0 0 -7.36c0,-17.72 -2.07,-32.74 -6.11,-44.86 -20.62,-41.34 -51.81,-61.96 -93.46,-61.96l-2.49 2.49 0 89.84c0,25.7 11.4,48.8 33.99,69.21 -22.59,17.2 -33.99,39.48 -33.99,66.73l0 89.94 2.49 2.38 1.14 0c14.19,0 27.15,-2.8 38.85,-8.5 39.69,-15.23 59.58,-48.8 59.58,-100.82l0 -4.87z"/>
+      <path class="cl0" d="M336.34 179.67c-17.62,-43.73 -48.81,-65.59 -93.56,-65.59l-145.68 0 0 -23 149.31 0c13.36,0 25.9,-2.9 37.72,-8.49 37.2,-18.86 55.85,-44.76 55.85,-77.71l0 -3.73 -1.24 -1.14 -239.25 1.14 -2.38 0c-11.71,0 -20.62,1.24 -26.73,3.73 -46.94,16.58 -70.36,45.28 -70.36,86.21l0 21.86c0,15.13 2.8,28.08 8.5,38.86 20.62,35.54 48.91,53.36 84.96,53.36l149.31 0 0 21.86 -241.63 0 -1.14 1.25c0,9.84 1.56,19.58 4.77,29.11 19.69,40.51 49.21,60.72 88.69,60.72l152.94 0c13.36,0 25.9,-2.8 37.72,-8.5 37.2,-18.86 55.85,-44.76 55.85,-77.71l0 -27.98c0,-10.26 -1.24,-18.34 -3.62,-24.24z"/>
+      <path class="cl0" d="M601.37 152.63c-4.66,82.98 -64.04,84.95 -131.72,82.79 -27.96,-1.03 -29.33,0.43 -29.79,-27.6 -0.42,-25.06 -0.81,-61.83 12.6,-83.66 25.43,-41.39 62.39,-39.83 105.22,-41.42 14.61,-0.55 38.14,-4.2 43.02,12.85 2.88,13.67 1.47,42.66 0.67,57.04zm-240.42 56.26l-1.24 248.26 1.24 0 1.24 1.24 3.62 0 18.24 -2.38c44.45,-17.41 66.73,-46.63 66.73,-87.45l0 -44.35 76.57 0c36.58,0 71.81,-15.75 105.58,-47.35 29.95,-32.74 44.97,-67.97 44.97,-105.58l0 -168.79 -2.48 -2.49 -161.43 0c-26.73,0 -54.29,8.91 -82.58,26.73 -46.94,35.44 -70.46,77.51 -70.46,126.31l0 55.85z"/>
+      <text x="1007.48" y="285.1" class="cl1" style="font-weight:bold;font-size:348.63px;font-family:Arial,sans-serif">IA</text>
+      <text x="532.76" y="401.28" class="cl0" style="font-size:66.33px;font-family:Arial,sans-serif;letter-spacing:2px">Intelligence and Automation</text>
+      <path class="cl1" d="M910.85 114.19l0 92.22 0.14 0 0 7.36c0,17.2 1.97,32.12 6.01,44.87 20.2,41.34 50.98,61.96 92.32,61.96l1.14 0 2.49 -2.38 0 -89.94c0,-25.08 -10.98,-47.77 -32.85,-67.97 21.86,-20.83 32.85,-42.28 32.85,-64.35l0 -93.46 -2.49 -2.49c-13.68,0 -27.87,3.21 -42.48,9.74 -38.02,17 -56.99,49.43 -56.99,97.09l0 7.36 -0.14 0z"/>
+      <path class="cl1" d="M1479 206.4l0 -92.22 -0.14 0 0 -7.36c0,-17.2 -1.97,-32.12 -6.01,-44.87 -20.2,-41.34 -50.98,-61.96 -92.32,-61.96l-1.14 0 -2.49 2.38 0 89.94c0,25.08 10.98,47.77 32.85,67.97 -21.86,20.83 -32.85,42.28 -32.85,64.35l0 93.46 2.49 2.49c13.68,0 27.87,-3.21 42.48,-9.74 38.02,-17 56.99,-49.43 56.99,-97.09l0 -7.36 0.14 0z"/>
+    </g>
+  </svg>
+
+  <div class="spacer"></div>
+  <div class="cover-label">Planejamento Executivo &middot; 2026</div>
+  <h1>Tozi <em>Imobiliária</em></h1>
+  <p class="cover-sub">IA de Atendimento + Processos Internos + Site &mdash; planejamento completo do projeto com cronograma, marcos, treinamentos e entregáveis.</p>
+  <div class="cover-stats">
+    <div>
+      <div class="cover-stat-val">R$ 11<span>.3k</span></div>
+      <div class="cover-stat-lbl">Mensal</div>
+    </div>
+    <div>
+      <div class="cover-stat-val">36</div>
+      <div class="cover-stat-lbl">Meses</div>
+    </div>
+    <div>
+      <div class="cover-stat-val">10</div>
+      <div class="cover-stat-lbl">Marcos</div>
+    </div>
+    <div>
+      <div class="cover-stat-val">3</div>
+      <div class="cover-stat-lbl">Frentes</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="cover-bottom">
+    <div class="cover-author">Paulo Seze &mdash; SPXIA / SimplexIA</div>
+    <div class="cover-date">Março 2026</div>
+  </div>
+</div>
+
+<!-- ============================== SLIDE 2: RESUMO ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">01</div>
+    <div class="slide-header-text">Resumo do Projeto</div>
+  </div>
+  <h2>Três frentes <em>estratégicas</em></h2>
+  <p class="slide-intro">IA Atendimento, IA Processos Internos e Site operando em paralelo com entregas progressivas.</p>
+
+  <div class="grid-3">
+    <div class="stat-card stat-card-dark">
+      <div class="stat-val">R$ 5.600</div>
+      <div class="stat-lbl">IA Atendimento / mês</div>
+    </div>
+    <div class="stat-card stat-card-dark">
+      <div class="stat-val">R$ 4.850</div>
+      <div class="stat-lbl">IA Processos / mês</div>
+    </div>
+    <div class="stat-card stat-card-dark">
+      <div class="stat-val">R$ 850</div>
+      <div class="stat-lbl">Site / mês</div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Frente</th><th>Investimento</th><th>Implantação</th><th>Foco</th></tr>
+    <tr><td><strong>IA Atendimento</strong></td><td>R$ 5.600/mês</td><td>12 meses (ciclo 1)</td><td>SDR Passivo, Follow-up, SDR Ativo, VoxIA</td></tr>
+    <tr><td><strong>IA Processos Internos</strong></td><td>R$ 4.850/mês</td><td>6 meses</td><td>Financeiro, Jurídico, Gestão</td></tr>
+    <tr><td><strong>Site</strong></td><td>R$ 850/mês</td><td>Incluído</td><td>Criação e manutenção</td></tr>
+  </table>
+
+  <div class="note-box">
+    <strong>Contexto:</strong> O SDR Passivo (Locação) já foi entregue em janeiro/2026 e está parcialmente ativo. A próxima fase retoma e expande esse trabalho.
+  </div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">02</div>
+</div>
+
+<!-- ============================== SLIDE 3: FORMATO DE TRABALHO ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">02</div>
+    <div class="slide-header-text">Formato de Trabalho</div>
+  </div>
+  <h2>Reuniões e <em>comunicação</em></h2>
+  <p class="slide-intro">Sprints semanais com validação ao final de cada entrega. Documentação técnica atualizada continuamente.</p>
+
+  <table>
+    <tr><th>Reunião</th><th>Frequência</th><th>Duração</th><th>Participantes</th><th>Objetivo</th></tr>
+    <tr><td><strong>Kickoff</strong></td><td>Única (16/03)</td><td>1h30</td><td>Paulo + Gestão Tozi</td><td>Alinhamento geral, acessos, cronograma</td></tr>
+    <tr><td><strong>Weekly</strong></td><td>Toda segunda</td><td>30min</td><td>Paulo + Ponto focal</td><td>Status, bloqueios, próximos passos</td></tr>
+    <tr><td><strong>Review de Fase</strong></td><td>A cada marco</td><td>1h</td><td>Paulo + Gestão</td><td>Demo, feedback, aceite</td></tr>
+    <tr><td><strong>Treinamento</strong></td><td>Por módulo</td><td>1h-2h</td><td>Paulo + Usuários</td><td>Capacitação prática</td></tr>
+    <tr><td><strong>Retro Trimestral</strong></td><td>A cada 3 meses</td><td>1h</td><td>Paulo + Gestão</td><td>Métricas, ajustes, roadmap</td></tr>
+  </table>
+
+  <div style="margin-top:16px;padding:16px 20px;border-radius:10px;background:var(--bg);border:1px solid var(--gray-100)">
+    <h4 style="font-size:0.78rem;font-weight:700;margin-bottom:10px">Canais de Comunicação</h4>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:0.72rem">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <span style="color:var(--red);font-weight:700;flex-shrink:0">Canal principal</span>
+        <span style="color:var(--gray-500)">Grupo WhatsApp (Simplex + Tozi)</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <span style="color:var(--red);font-weight:700;flex-shrink:0">Demandas técnicas</span>
+        <span style="color:var(--gray-500)">Tickets via ChatWoot ou email</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <span style="color:var(--red);font-weight:700;flex-shrink:0">Documentação</span>
+        <span style="color:var(--gray-500)">Pasta compartilhada</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <span style="color:var(--red);font-weight:700;flex-shrink:0">Urgências</span>
+        <span style="color:var(--gray-500)">WhatsApp direto com Paulo</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">03</div>
+</div>
+
+<!-- ============================== SLIDE 4: IA ATENDIMENTO — FASES 1-2 ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">03</div>
+    <div class="slide-header-text">Cronograma — IA Atendimento</div>
+  </div>
+  <h2>SDR Passivo e <em>Follow-up</em></h2>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 1: SDR Passivo — Reativação e Expansão</h3>
+      <div class="dates">16/03 a 10/04/2026 — Semanas 1-4</div>
+    </div>
+    <table>
+      <tr><th>Sem.</th><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td><strong>S1</strong></td><td>16-20/03</td><td>Kickoff geral; Revisão dos fluxos (Clara, Atribuidor, Copiloto); Levantamento de ajustes</td><td>Ata de kickoff; Lista de ajustes</td></tr>
+      <tr><td><strong>S2</strong></td><td>23-27/03</td><td>Ajustes na IA (prompts, fluxos); Reativação SDR Passivo Locação; Testes controlados</td><td>SDR Locação reativado</td></tr>
+      <tr><td><strong>S3</strong></td><td>30/03-03/04</td><td>Mapeamento Vendas; Ajuste de prompts e rotas; Config times ChatWoot</td><td>SDR expandido para Vendas</td></tr>
+      <tr><td><strong>S4</strong></td><td>06-10/04</td><td>Mapeamento Jurídico e Financeiro; Config rotas e triagem; Ativação completa</td><td>SDR ativo em todos os deptos</td></tr>
+    </table>
+    <div class="milestone-box">Marco M1 — 10/04: SDR Passivo ativo em todos os departamentos</div>
+    <div class="training-box">Treinamento T1 (semana de 06/04): Equipe Locação + Vendas — Clara, leads, Copiloto (1h)</div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 2: Follow-up Automatizado</h3>
+      <div class="dates">13/04 a 08/05/2026 — Semanas 5-8</div>
+    </div>
+    <table>
+      <tr><th>Sem.</th><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td><strong>S5</strong></td><td>13-17/04</td><td>Critérios de ociosidade; Fluxos de follow-up; Mensagens por cenário</td><td>Regras de follow-up aprovadas</td></tr>
+      <tr><td><strong>S6</strong></td><td>20-24/04</td><td>Gatilhos automáticos (cron + ChatWoot); Limites de tentativas</td><td>Workflow n8n de follow-up</td></tr>
+      <tr><td><strong>S7</strong></td><td>27/04-01/05</td><td>Testes com dados reais; Monitoramento; Ajustes</td><td>Follow-up em teste controlado</td></tr>
+      <tr><td><strong>S8</strong></td><td>04-08/05</td><td>Ajustes finais; Ativação oficial</td><td>Follow-up ativo</td></tr>
+    </table>
+    <div class="milestone-box">Marco M2 — 08/05: Follow-up automatizado ativo</div>
+    <div class="training-box">Treinamento T2 (semana de 04/05): Equipe — acompanhamento de follow-ups (30min)</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">04</div>
+</div>
+
+<!-- ============================== SLIDE 5: IA ATENDIMENTO — FASES 3-4 ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">03</div>
+    <div class="slide-header-text">Cronograma — IA Atendimento</div>
+  </div>
+  <h2>SDR Ativo e <em>BDR</em></h2>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 3: SDR Ativo / BDR — Estruturação</h3>
+      <div class="dates">11/05 a 05/06/2026 — Semanas 9-12</div>
+    </div>
+    <table>
+      <tr><th>Sem.</th><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td><strong>S9</strong></td><td>11-15/05</td><td>Organização base de leads; Segmentos e prioridades; Limpeza</td><td>Base organizada e segmentada</td></tr>
+      <tr><td><strong>S10</strong></td><td>18-22/05</td><td>Abordagem IA por segmento; Scripts/prompts; Fluxos n8n</td><td>Prompts e fluxos prontos</td></tr>
+      <tr><td><strong>S11</strong></td><td>25-29/05</td><td>Config disparos; Integração ChatWoot; Testes amostra</td><td>Disparos testados</td></tr>
+      <tr><td><strong>S12</strong></td><td>01-05/06</td><td>Início prospecção ativa; Monitoramento</td><td>BDR operando</td></tr>
+    </table>
+    <div class="milestone-box">Marco M3 — 05/06: BDR/SDR Ativo operando</div>
+    <div class="training-box">Treinamento T3 (semana de 01/06): Equipe comercial — pipeline de conversão (1h)</div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 4: BDR — Ajustes Operacionais</h3>
+      <div class="dates">08/06 a 03/07/2026 — Semanas 13-16</div>
+    </div>
+    <table>
+      <tr><th>Sem.</th><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td><strong>S13</strong></td><td>08-12/06</td><td>Monitoramento de respostas e métricas</td><td>Relatório de performance</td></tr>
+      <tr><td><strong>S14</strong></td><td>15-19/06</td><td>Ajustes de abordagem baseados em dados</td><td>Prompts refinados</td></tr>
+      <tr><td><strong>S15</strong></td><td>22-26/06</td><td>Refinamento de qualificação</td><td>Critérios atualizados</td></tr>
+      <tr><td><strong>S16</strong></td><td>29/06-03/07</td><td>Estabilização do fluxo ativo</td><td>BDR estável</td></tr>
+    </table>
+    <div class="milestone-box">Marco M4 — 03/07: BDR estabilizado</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">05</div>
+</div>
+
+<!-- ============================== SLIDE 6: IA ATENDIMENTO — FASES 5-6 ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">03</div>
+    <div class="slide-header-text">Cronograma — IA Atendimento</div>
+  </div>
+  <h2>VoxIA — Atendimento <em>por Voz</em></h2>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 5: VoxIA — Estrutura Técnica</h3>
+      <div class="dates">06/07 a 31/07/2026 — Semanas 17-20</div>
+    </div>
+    <table>
+      <tr><th>Sem.</th><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td><strong>S17</strong></td><td>06-10/07</td><td>Config infraestrutura de voz (provider, telefonia, APIs)</td><td>Infraestrutura provisionada</td></tr>
+      <tr><td><strong>S18</strong></td><td>13-17/07</td><td>Integração com ChatWoot/n8n</td><td>Integração funcional</td></tr>
+      <tr><td><strong>S19</strong></td><td>20-24/07</td><td>Fluxo de atendimento receptivo por voz</td><td>Fluxo receptivo pronto</td></tr>
+      <tr><td><strong>S20</strong></td><td>27-31/07</td><td>Testes técnicos de qualidade e compreensão</td><td>Relatório de testes</td></tr>
+    </table>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 6: VoxIA — Ativação Receptiva</h3>
+      <div class="dates">03/08 a 28/08/2026 — Semanas 21-24</div>
+    </div>
+    <table>
+      <tr><th>Sem.</th><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td><strong>S21</strong></td><td>03-07/08</td><td>Ajustes de linguagem e tom de voz</td><td>Voz calibrada</td></tr>
+      <tr><td><strong>S22</strong></td><td>10-14/08</td><td>Testes com cenários reais</td><td>Relatório de acurácia</td></tr>
+      <tr><td><strong>S23</strong></td><td>17-21/08</td><td>Correções finais</td><td>Sistema ajustado</td></tr>
+      <tr><td><strong>S24</strong></td><td>24-28/08</td><td>Ativação oficial atendimento por voz</td><td>VoxIA Receptivo ativo</td></tr>
+    </table>
+    <div class="milestone-box">Marco M5 — 28/08: VoxIA Receptivo ativo</div>
+    <div class="training-box">Treinamento T4 (semana de 24/08): Equipe — atendimento por voz, escalamento humano (1h)</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">06</div>
+</div>
+
+<!-- ============================== SLIDE 7: IA ATENDIMENTO — FASES 7-8 ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">03</div>
+    <div class="slide-header-text">Cronograma — IA Atendimento</div>
+  </div>
+  <h2>VoxIA Ativo e <em>Consolidação</em></h2>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 7: VoxIA — Chamadas Ativas</h3>
+      <div class="dates">31/08 a 23/10/2026 — Semanas 25-32</div>
+    </div>
+    <table>
+      <tr><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td>31/08-11/09 (S25-26)</td><td>Definição de roteiros; Config campanhas</td><td>Roteiros e campanhas</td></tr>
+      <tr><td>14/09-25/09 (S27-28)</td><td>Testes de chamadas ativas; Ajustes</td><td>Chamadas testadas</td></tr>
+      <tr><td>28/09-09/10 (S29-30)</td><td>Início oficial + monitoramento</td><td>VoxIA Ativo operando</td></tr>
+      <tr><td>12/10-23/10 (S31-32)</td><td>Ajustes de performance; Estabilização</td><td>VoxIA completo</td></tr>
+    </table>
+    <div class="milestone-box">Marco M6 — 23/10: VoxIA Completo (ativo + receptivo)</div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase 8: Consolidação</h3>
+      <div class="dates">26/10/2026 a 13/03/2027 — Semanas 33-52</div>
+    </div>
+    <table>
+      <tr><th>Período</th><th>Mês</th><th>Foco</th></tr>
+      <tr><td>26/10-20/11</td><td>Mês 9</td><td>Ajustes integrados SDR + BDR + VoxIA; Padronização</td></tr>
+      <tr><td>23/11-19/12</td><td>Mês 10</td><td>Refinamento operacional: scripts, triagem, otimizações</td></tr>
+      <tr><td>22/12-16/01/27</td><td>Mês 11</td><td>Estabilização geral: correções, testes de carga, ajustes finos</td></tr>
+      <tr><td>19/01-13/03/27</td><td>Mês 12</td><td>Monitoramento contínuo; Prep. ciclo 2</td></tr>
+    </table>
+    <div class="milestone-box">Marco M7 — 13/03/2027: Ciclo 1 completo</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">07</div>
+</div>
+
+<!-- ============================== SLIDE 8: IA PROCESSOS — FASES A-B ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">04</div>
+    <div class="slide-header-text">Cronograma — IA Processos Internos</div>
+  </div>
+  <h2>Financeiro e <em>Jurídico</em></h2>
+  <div class="note-box">Esta frente roda <strong>em paralelo</strong> com a IA Atendimento.</div>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase A: Financeiro</h3>
+      <div class="dates">16/03 a 08/05/2026 — Semanas 1-8</div>
+    </div>
+    <table>
+      <tr><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td>16-27/03 (S1-2)</td><td>Mapeamento processos financeiros; Integração sistema imobiliário; Contas a receber</td><td>Documento de processos + integração</td></tr>
+      <tr><td>30/03-10/04 (S3-4)</td><td>Geração automática cobranças; Lembretes pós-vencimento</td><td>Automação cobrança ativa</td></tr>
+      <tr><td>13-24/04 (S5-6)</td><td>Conciliação bancária automática; Cruzamento contratos x extratos</td><td>Conciliação automatizada</td></tr>
+      <tr><td>27/04-08/05 (S7-8)</td><td>Repasse ao proprietário; Projeção fluxo de caixa</td><td>Financeiro automatizado</td></tr>
+    </table>
+    <div class="milestone-box">Marco MA — 08/05: Financeiro automatizado</div>
+    <div class="training-box">Treinamento TA (semana de 04/05): Equipe financeira — operação do novo fluxo (2h)</div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase B: Jurídico</h3>
+      <div class="dates">11/05 a 03/07/2026 — Semanas 9-16</div>
+    </div>
+    <table>
+      <tr><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td>11-22/05 (S9-10)</td><td>Modelos contratuais padrão; Parametrização cláusulas variáveis</td><td>Modelos prontos</td></tr>
+      <tr><td>25/05-05/06 (S11-12)</td><td>Geração automática contratos; Assinatura digital</td><td>Contratos automatizados</td></tr>
+      <tr><td>08-19/06 (S13-14)</td><td>Leitura inteligente contratos; Comparação com modelo padrão</td><td>IA análise contratual</td></tr>
+      <tr><td>22/06-03/07 (S15-16)</td><td>Controle de prazos; Gestão inadimplência</td><td>Jurídico estruturado</td></tr>
+    </table>
+    <div class="milestone-box">Marco MB — 03/07: Jurídico automatizado</div>
+    <div class="training-box">Treinamento TB (semana de 29/06): Equipe jurídica — contratos e prazos (2h)</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">08</div>
+</div>
+
+<!-- ============================== SLIDE 9: IA PROCESSOS — FASE C ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">04</div>
+    <div class="slide-header-text">Cronograma — IA Processos Internos</div>
+  </div>
+  <h2>Gestão e <em>Inteligência</em></h2>
+
+  <div class="phase-block">
+    <div class="phase-header">
+      <h3>Fase C: Gestão</h3>
+      <div class="dates">06/07 a 28/08/2026 — Semanas 17-24</div>
+    </div>
+    <table>
+      <tr><th>Período</th><th>Atividades</th><th>Entregável</th></tr>
+      <tr><td>06-17/07 (S17-18)</td><td>Indicadores estratégicos; Consolidação base de dados</td><td>KPIs + base unificada</td></tr>
+      <tr><td>20-31/07 (S19-20)</td><td>Dashboards executivos; Integração financeiro + jurídico</td><td>Dashboards operacionais</td></tr>
+      <tr><td>03-14/08 (S21-22)</td><td>Relatórios automáticos mensais</td><td>Relatórios configurados</td></tr>
+      <tr><td>17-28/08 (S23-24)</td><td>Análise preditiva (inadimplência, risco, fluxo de caixa)</td><td>Análise preditiva ativa</td></tr>
+    </table>
+    <div class="milestone-box">Marco MC — 28/08: Gestão com IA ativa</div>
+    <div class="training-box">Treinamento TC (semana de 24/08): Gestão — dashboards e previsões (1h30)</div>
+  </div>
+
+  <h2 style="margin-top:24px">Visão Geral — <em>Timeline</em></h2>
+
+  <div class="timeline-box">         MAR        ABR        MAI        JUN        JUL        AGO        SET        OUT
+       16  23  30  06  13  20  27  04  11  18  25  01  08  15  22  29  06  13  20  27  03  10  17  24  31  07  14  21  28
+
+ATEND: ███ ███ ███ M1
+FLLUP:  .   .   .   .  ███ ███ ███ M2
+BDR:    .   .   .   .   .   .   .   .  ███ ███ ███ M3  ███ ███ ███ M4
+VOXIA:  .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .  ███ ███ ███ ███ ███ ███ ███ M5  ███ ███ ███ ███ M6
+
+FINANC: ███ ███ ███ ███ ███ ███ ███ MA
+JURID:  .   .   .   .   .   .   .   .  ███ ███ ███ ███ ███ ███ ███ MB
+GESTAO: .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .  ███ ███ ███ ███ ███ ███ ███ MC</div>
+
+  <div class="spacer"></div>
+  <div class="slide-num">09</div>
+</div>
+
+<!-- ============================== SLIDE 10: MARCOS E TREINAMENTOS ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">05</div>
+    <div class="slide-header-text">Marcos e Treinamentos</div>
+  </div>
+  <h2>Marcos e <em>datas-chave</em></h2>
+
+  <table>
+    <tr><th>#</th><th>Marco</th><th>Data</th><th>Frente</th><th>Critério de Aceite</th></tr>
+    <tr><td><strong>M1</strong></td><td>SDR Passivo completo</td><td><strong>10/04</strong></td><td>Atendimento</td><td>Clara atendendo Locação, Vendas, Jurídico, Financeiro</td></tr>
+    <tr><td><strong>M2</strong></td><td>Follow-up automatizado</td><td><strong>08/05</strong></td><td>Atendimento</td><td>Leads ociosos recebendo recontato automático</td></tr>
+    <tr><td><strong>M3</strong></td><td>BDR operando</td><td><strong>05/06</strong></td><td>Atendimento</td><td>Prospecção ativa gerando leads qualificados</td></tr>
+    <tr><td><strong>M4</strong></td><td>BDR estabilizado</td><td><strong>03/07</strong></td><td>Atendimento</td><td>Métricas de conversão estáveis</td></tr>
+    <tr><td><strong>M5</strong></td><td>VoxIA Receptivo</td><td><strong>28/08</strong></td><td>Atendimento</td><td>Ligações atendidas por IA com qualidade</td></tr>
+    <tr><td><strong>M6</strong></td><td>VoxIA Completo</td><td><strong>23/10</strong></td><td>Atendimento</td><td>Chamadas ativas gerando resultados</td></tr>
+    <tr><td><strong>M7</strong></td><td>Ciclo 1 completo</td><td><strong>13/03/27</strong></td><td>Atendimento</td><td>Operação estável, métricas consolidadas</td></tr>
+    <tr><td><strong>MA</strong></td><td>Financeiro automatizado</td><td><strong>08/05</strong></td><td>Processos</td><td>Cobrança, conciliação e repasse automáticos</td></tr>
+    <tr><td><strong>MB</strong></td><td>Jurídico automatizado</td><td><strong>03/07</strong></td><td>Processos</td><td>Contratos gerados e monitorados por IA</td></tr>
+    <tr><td><strong>MC</strong></td><td>Gestão com IA</td><td><strong>28/08</strong></td><td>Processos</td><td>Dashboards e análise preditiva operacionais</td></tr>
+  </table>
+
+  <h2 style="margin-top:18px">Calendário de <em>treinamentos</em></h2>
+
+  <table>
+    <tr><th>#</th><th>Treinamento</th><th>Público</th><th>Duração</th><th>Data</th><th>Formato</th></tr>
+    <tr><td>T1</td><td>SDR Passivo + Copiloto</td><td>Locação + Vendas</td><td>1h</td><td><strong>06/04</strong></td><td>Presencial + gravação</td></tr>
+    <tr><td>T2</td><td>Follow-up</td><td>Equipe comercial</td><td>30min</td><td><strong>04/05</strong></td><td>Call + doc</td></tr>
+    <tr><td>T3</td><td>BDR / Prospecção</td><td>Equipe comercial</td><td>1h</td><td><strong>01/06</strong></td><td>Presencial</td></tr>
+    <tr><td>T4</td><td>VoxIA</td><td>Equipe geral</td><td>1h</td><td><strong>24/08</strong></td><td>Presencial</td></tr>
+    <tr><td>TA</td><td>Financeiro</td><td>Equipe financeira</td><td>2h</td><td><strong>04/05</strong></td><td>Hands-on</td></tr>
+    <tr><td>TB</td><td>Jurídico</td><td>Equipe jurídica</td><td>2h</td><td><strong>29/06</strong></td><td>Hands-on</td></tr>
+    <tr><td>TC</td><td>Dashboards e Gestão</td><td>Diretoria</td><td>1h30</td><td><strong>24/08</strong></td><td>Demo</td></tr>
+  </table>
+
+  <div class="spacer"></div>
+  <div class="slide-num">10</div>
+</div>
+
+<!-- ============================== SLIDE 11: RISCOS E DEPENDÊNCIAS ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">06</div>
+    <div class="slide-header-text">Riscos e Dependências</div>
+  </div>
+  <h2>Riscos e <em>mitigações</em></h2>
+
+  <table>
+    <tr><th>Risco</th><th>Impacto</th><th>Prob.</th><th>Mitigação</th></tr>
+    <tr><td>Resistência da equipe ao uso da IA</td><td><span class="risk-high">Alto</span></td><td><span class="risk-med">Média</span></td><td>Treinamento prático, envolvimento desde kickoff, benefícios concretos</td></tr>
+    <tr><td>API Vista com limitações</td><td><span class="risk-med">Médio</span></td><td><span class="risk-med">Média</span></td><td>Mapear endpoints na S1 (16-20/03), alternativas via scraping</td></tr>
+    <tr><td>Qualidade da IA abaixo do esperado</td><td><span class="risk-high">Alto</span></td><td><span class="risk-low">Baixa</span></td><td>Monitoramento contínuo, ajustes de prompt, evaluation automatizado</td></tr>
+    <tr><td>Atraso no fornecimento de info pela Tozi</td><td><span class="risk-med">Médio</span></td><td><span class="risk-med">Média</span></td><td>Ponto focal definido, SLA de 48h para solicitações</td></tr>
+    <tr><td>VoxIA com custos adicionais</td><td><span class="risk-med">Médio</span></td><td><span class="risk-high">Alta</span></td><td>Levantar custos até 10/07, aprovar antes de contratar</td></tr>
+    <tr><td>Integração financeira com legado</td><td><span class="risk-high">Alto</span></td><td><span class="risk-med">Média</span></td><td>Mapeamento até 27/03, validar viabilidade técnica</td></tr>
+  </table>
+
+  <h2 style="margin-top:18px">Dependências da <em>Tozi</em></h2>
+
+  <table>
+    <tr><th>O que</th><th>Até quando</th><th>Responsável</th></tr>
+    <tr><td>Acessos ao sistema imobiliário (financeiro/jurídico)</td><td><strong>16/03</strong> (kickoff)</td><td>TI Tozi</td></tr>
+    <tr><td>Extratos bancários / acesso a contas</td><td><strong>13/04</strong></td><td>Financeiro Tozi</td></tr>
+    <tr><td>Aprovação de scripts de follow-up</td><td><strong>13/04</strong></td><td>Gestão Tozi</td></tr>
+    <tr><td>Modelos de contrato atuais</td><td><strong>11/05</strong></td><td>Jurídico Tozi</td></tr>
+    <tr><td>Base de leads para prospecção ativa</td><td><strong>11/05</strong></td><td>Comercial Tozi</td></tr>
+    <tr><td>Aprovação de scripts de prospecção</td><td><strong>18/05</strong></td><td>Gestão Tozi</td></tr>
+    <tr><td>Número telefônico para VoxIA</td><td><strong>06/07</strong></td><td>Gestão Tozi</td></tr>
+  </table>
+
+  <div class="spacer"></div>
+  <div class="slide-num">11</div>
+</div>
+
+<!-- ============================== SLIDE 12: MÉTRICAS ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">07</div>
+    <div class="slide-header-text">Métricas de Sucesso</div>
+  </div>
+  <h2>Métricas e <em>metas</em></h2>
+
+  <h3 style="font-family:var(--font-mono);font-size:0.65rem;font-weight:600;color:var(--gray-500);letter-spacing:0.08em;text-transform:uppercase;margin:14px 0 6px">IA Atendimento</h3>
+  <table>
+    <tr><th>Métrica</th><th>Baseline</th><th>Meta Jun/26</th><th>Meta Set/26</th><th>Meta Mar/27</th></tr>
+    <tr><td>Tempo 1ª resposta</td><td>~15min (manual)</td><td>&lt; 30s</td><td>&lt; 30s</td><td>&lt; 30s</td></tr>
+    <tr><td>Leads qualificados auto</td><td>0%</td><td>70%</td><td>85%</td><td>90%</td></tr>
+    <tr><td>Conversão lead → visita</td><td>A medir</td><td>+10%</td><td>+20%</td><td>+30%</td></tr>
+    <tr><td>Leads recuperados follow-up</td><td>0</td><td>5/sem</td><td>10/sem</td><td>15/sem</td></tr>
+    <tr><td>Atendimentos voz/dia</td><td>0</td><td>0</td><td>10 recept.</td><td>20 total</td></tr>
+  </table>
+
+  <h3 style="font-family:var(--font-mono);font-size:0.65rem;font-weight:600;color:var(--gray-500);letter-spacing:0.08em;text-transform:uppercase;margin:14px 0 6px">IA Processos Internos</h3>
+  <table>
+    <tr><th>Métrica</th><th>Baseline</th><th>Meta Mai/26</th><th>Meta Jul/26</th><th>Meta Set/26</th></tr>
+    <tr><td>Emissão de contrato</td><td>Manual (horas)</td><td>—</td><td>5 min</td><td>2 min</td></tr>
+    <tr><td>Conciliação bancária</td><td>Manual (dias)</td><td>Automática</td><td>—</td><td>—</td></tr>
+    <tr><td>Repasse proprietário</td><td>Manual</td><td>Automático</td><td>—</td><td>—</td></tr>
+    <tr><td>Prazos monitorados</td><td>0%</td><td>—</td><td>100%</td><td>100%</td></tr>
+    <tr><td>Dashboards ativos</td><td>0</td><td>0</td><td>0</td><td>3+</td></tr>
+  </table>
+
+  <div class="spacer"></div>
+  <div class="slide-num">12</div>
+</div>
+
+<!-- ============================== SLIDE 13: ENTREGÁVEIS E RELATÓRIOS ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">08</div>
+    <div class="slide-header-text">Entregáveis e Relatórios</div>
+  </div>
+  <h2>Documentação e <em>relatórios</em></h2>
+
+  <h3 style="font-family:var(--font-mono);font-size:0.65rem;font-weight:600;color:var(--gray-500);letter-spacing:0.08em;text-transform:uppercase;margin:14px 0 6px">Documentação por fase</h3>
+  <table>
+    <tr><th>#</th><th>Entregável</th><th>Descrição</th></tr>
+    <tr><td>1</td><td><strong>Guia do usuário</strong></td><td>Como usar o módulo (linguagem não-técnica)</td></tr>
+    <tr><td>2</td><td><strong>Documentação técnica</strong></td><td>Fluxos, APIs, configurações (para manutenção)</td></tr>
+    <tr><td>3</td><td><strong>Vídeo de treinamento</strong></td><td>Gravação da sessão de capacitação</td></tr>
+    <tr><td>4</td><td><strong>Relatório de entrega</strong></td><td>O que foi feito, métricas iniciais, próximos passos</td></tr>
+  </table>
+
+  <h3 style="font-family:var(--font-mono);font-size:0.65rem;font-weight:600;color:var(--gray-500);letter-spacing:0.08em;text-transform:uppercase;margin:14px 0 6px">Relatórios recorrentes</h3>
+  <table>
+    <tr><th>Tipo</th><th>Frequência</th><th>Conteúdo</th></tr>
+    <tr><td><strong>Status Semanal</strong></td><td>Toda segunda-feira</td><td>O que foi feito, próxima semana, bloqueios</td></tr>
+    <tr><td><strong>Relatório Mensal</strong></td><td>1ª segunda do mês</td><td>Métricas: leads, conversão, tempo resposta, qualidade IA</td></tr>
+    <tr><td><strong>Review Trimestral</strong></td><td>A cada 3 meses</td><td>Resultados vs. expectativas, ajustes estratégicos</td></tr>
+  </table>
+
+  <h3 style="font-family:var(--font-mono);font-size:0.65rem;font-weight:600;color:var(--gray-500);letter-spacing:0.08em;text-transform:uppercase;margin:14px 0 6px">Retrospectivas trimestrais</h3>
+  <table>
+    <tr><th>#</th><th>Data</th><th>Escopo</th></tr>
+    <tr><td>Q1</td><td><strong>08/06/2026</strong></td><td>SDR Passivo + Follow-up + início BDR + Financeiro</td></tr>
+    <tr><td>Q2</td><td><strong>31/08/2026</strong></td><td>BDR + VoxIA + Jurídico + Gestão</td></tr>
+    <tr><td>Q3</td><td><strong>23/11/2026</strong></td><td>Consolidação geral</td></tr>
+    <tr><td>Q4</td><td><strong>13/03/2027</strong></td><td>Ciclo 1 completo, planejamento ciclo 2</td></tr>
+  </table>
+
+  <div class="spacer"></div>
+  <div class="slide-num">13</div>
+</div>
+
+<!-- ============================== SLIDE 14: PRÓXIMOS PASSOS ============================== -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">09</div>
+    <div class="slide-header-text">Próximos Passos</div>
+  </div>
+  <h2>Ações <em>imediatas</em></h2>
+  <p class="slide-intro">Tarefas que precisam acontecer antes ou durante a semana de kickoff.</p>
+
+  <table>
+    <tr><th>#</th><th>Ação</th><th>Responsável</th><th>Prazo</th></tr>
+    <tr><td>1</td><td>Assinatura do contrato</td><td>Gestão Tozi + Simplex</td><td><strong>16/03</strong></td></tr>
+    <tr><td>2</td><td>Reunião de kickoff</td><td>Paulo</td><td><strong>16/03</strong></td></tr>
+    <tr><td>3</td><td>Definir ponto focal Tozi</td><td>Gestão Tozi</td><td><strong>16/03</strong></td></tr>
+    <tr><td>4</td><td>Solicitar acessos (financeiro, jurídico)</td><td>Ponto focal Tozi</td><td><strong>16/03</strong></td></tr>
+    <tr><td>5</td><td>Criar grupo WhatsApp</td><td>Paulo</td><td><strong>16/03</strong></td></tr>
+    <tr><td>6</td><td>Enviar cronograma ao cliente</td><td>Paulo</td><td><strong>13/03</strong></td></tr>
+  </table>
+
+  <h2 style="margin-top:24px">Datas-chave <em>resumo</em></h2>
+
+  <table>
+    <tr><th>Data</th><th>Evento</th></tr>
+    <tr><td><strong>16/03/2026</strong></td><td>Início do projeto / Kickoff</td></tr>
+    <tr><td><strong>10/04/2026</strong></td><td>Marco M1: SDR Passivo completo</td></tr>
+    <tr><td><strong>08/05/2026</strong></td><td>Marco M2 + MA: Follow-up + Financeiro</td></tr>
+    <tr><td><strong>05/06/2026</strong></td><td>Marco M3: BDR operando</td></tr>
+    <tr><td><strong>08/06/2026</strong></td><td>Retro Q1 (trimestre 1)</td></tr>
+    <tr><td><strong>03/07/2026</strong></td><td>Marco M4 + MB: BDR estável + Jurídico</td></tr>
+    <tr><td><strong>28/08/2026</strong></td><td>Marco M5 + MC: VoxIA Receptivo + Gestão</td></tr>
+    <tr><td><strong>23/10/2026</strong></td><td>Marco M6: VoxIA Completo</td></tr>
+    <tr><td><strong>13/03/2027</strong></td><td>Marco M7: Ciclo 1 completo / Retro Q4</td></tr>
+  </table>
+
+  <div class="spacer"></div>
+  <div class="slide-num">14</div>
+</div>
+
+<!-- ============================== SLIDE 15: ENCERRAMENTO ============================== -->
+<div class="slide closing">
+  <div class="spacer"></div>
+  <h2>Vamos <em>começar.</em></h2>
+  <p>3 frentes. 10 marcos. 36 meses.<br>Início em 16 de março de 2026.</p>
+  <svg class="closing-logo" viewBox="0 0 1535.46 468.14" xmlns="http://www.w3.org/2000/svg" style="height:28px;shape-rendering:geometricPrecision">
+    <defs><style>.cf0{fill:#FEFEFE}.cf1{fill:#ED3237}</style></defs>
+    <g>
+      <path class="cf0" d="M811.25 206.4l99.57 0 0 7.36c0,17.2 1.97,32.12 6.01,44.87 20.2,41.34 50.98,61.96 92.32,61.96l1.14 0 2.49 -2.38 0 -89.94c0,-25.08 -10.98,-47.77 -32.85,-67.97 21.86,-20.83 32.85,-42.28 32.85,-64.35l0 -93.46 -2.49 -2.49c-13.68,0 -27.87,3.21 -42.48,9.74 -38.02,17 -56.99,49.43 -56.99,97.09l0 7.36 -99.57 0 0 -7.36c0,-17.72 -2.07,-32.74 -6.11,-44.86 -20.62,-41.34 -51.81,-61.96 -93.46,-61.96l-2.49 2.49 0 89.84c0,25.7 11.4,48.8 33.99,69.21 -22.59,17.2 -33.99,39.48 -33.99,66.73l0 89.94 2.49 2.38 1.14 0c14.19,0 27.15,-2.8 38.85,-8.5 39.69,-15.23 59.58,-48.8 59.58,-100.82l0 -4.87z"/>
+      <path class="cf0" d="M336.34 179.67c-17.62,-43.73 -48.81,-65.59 -93.56,-65.59l-145.68 0 0 -23 149.31 0c13.36,0 25.9,-2.9 37.72,-8.49 37.2,-18.86 55.85,-44.76 55.85,-77.71l0 -3.73 -1.24 -1.14 -239.25 1.14 -2.38 0c-11.71,0 -20.62,1.24 -26.73,3.73 -46.94,16.58 -70.36,45.28 -70.36,86.21l0 21.86c0,15.13 2.8,28.08 8.5,38.86 20.62,35.54 48.91,53.36 84.96,53.36l149.31 0 0 21.86 -241.63 0 -1.14 1.25c0,9.84 1.56,19.58 4.77,29.11 19.69,40.51 49.21,60.72 88.69,60.72l152.94 0c13.36,0 25.9,-2.8 37.72,-8.5 37.2,-18.86 55.85,-44.76 55.85,-77.71l0 -27.98c0,-10.26 -1.24,-18.34 -3.62,-24.24z"/>
+      <path class="cf0" d="M601.37 152.63c-4.66,82.98 -64.04,84.95 -131.72,82.79 -27.96,-1.03 -29.33,0.43 -29.79,-27.6 -0.42,-25.06 -0.81,-61.83 12.6,-83.66 25.43,-41.39 62.39,-39.83 105.22,-41.42 14.61,-0.55 38.14,-4.2 43.02,12.85 2.88,13.67 1.47,42.66 0.67,57.04zm-240.42 56.26l-1.24 248.26 1.24 0 1.24 1.24 3.62 0 18.24 -2.38c44.45,-17.41 66.73,-46.63 66.73,-87.45l0 -44.35 76.57 0c36.58,0 71.81,-15.75 105.58,-47.35 29.95,-32.74 44.97,-67.97 44.97,-105.58l0 -168.79 -2.48 -2.49 -161.43 0c-26.73,0 -54.29,8.91 -82.58,26.73 -46.94,35.44 -70.46,77.51 -70.46,126.31l0 55.85z"/>
+      <text x="1007.48" y="285.1" class="cf1" style="font-weight:bold;font-size:348.63px;font-family:Arial,sans-serif">IA</text>
+      <text x="532.76" y="401.28" class="cf0" style="font-size:66.33px;font-family:Arial,sans-serif;letter-spacing:2px">Intelligence and Automation</text>
+      <path class="cf1" d="M910.85 114.19l0 92.22 0.14 0 0 7.36c0,17.2 1.97,32.12 6.01,44.87 20.2,41.34 50.98,61.96 92.32,61.96l1.14 0 2.49 -2.38 0 -89.94c0,-25.08 -10.98,-47.77 -32.85,-67.97 21.86,-20.83 32.85,-42.28 32.85,-64.35l0 -93.46 -2.49 -2.49c-13.68,0 -27.87,3.21 -42.48,9.74 -38.02,17 -56.99,49.43 -56.99,97.09l0 7.36 -0.14 0z"/>
+      <path class="cf1" d="M1479 206.4l0 -92.22 -0.14 0 0 -7.36c0,-17.2 -1.97,-32.12 -6.01,-44.87 -20.2,-41.34 -50.98,-61.96 -92.32,-61.96l-1.14 0 -2.49 2.38 0 89.94c0,25.08 10.98,47.77 32.85,67.97 -21.86,20.83 -32.85,42.28 -32.85,64.35l0 93.46 2.49 2.49c13.68,0 27.87,-3.21 42.48,-9.74 38.02,-17 56.99,-49.43 56.99,-97.09l0 -7.36 0.14 0z"/>
+    </g>
+  </svg>
+  <div class="closing-contact">contato@simplexsolucoes.com.br</div>
+  <div class="spacer"></div>
+  <div class="slide-num" style="color:rgba(255,255,255,0.15)">15</div>
+</div>
+
+</body>
+</html>

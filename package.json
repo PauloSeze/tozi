@@ -1,0 +1,15 @@
+{
+  "name": "tozi",
+  "version": "1.0.0",
+  "description": "**Cliente:** Tozi Imobiliária (Sinop/MT)\r **Status:** Em implementação\r **Última atualização:** 09/02/2026",
+  "main": "generate-comportamental-pdf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.58.2"
+  }
+}

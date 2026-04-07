@@ -1,0 +1,30 @@
+{
+  "event": "message_created",
+  "message_type": "outgoing",
+  "private": false,
+  "content": "Olá Paulo, vou verificar as opções para você!",
+  "attachments": [],
+  "source_id": null,
+  "id": 592920,
+  "content_attributes": {},
+  "sender": {
+    "id": 66,
+    "name": "Camila",
+    "type": "user"
+  },
+  "conversation": {
+    "id": 2159,
+    "inbox_id": 91,
+    "status": "open",
+    "labels": [],
+    "custom_attributes": {},
+    "contact_inbox": {
+      "source_id": "5566996350491"
+    },
+    "meta": {
+      "sender": {"name": "Paulo Seze", "id": 10685},
+      "assignee": {"name": "Camila", "id": 66}
+    },
+    "messages": []
+  }
+}

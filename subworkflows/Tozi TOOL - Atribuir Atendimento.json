@@ -1,0 +1,378 @@
+{
+  "name": "Tozi TOOL - Atribuir Atendimento",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"sender_id\": 123,\n  \"chat_id\": 123,\n  \"resumo\": \"a string\",\n  \"sugestao\": \"a string\"\n}"
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -656,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $json.chat_id }}/assignments",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "5yDXBtQR5ZLvdyiBecXsDc3t"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "assignee_id",
+              "value": "66"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -352,
+        352
+      ],
+      "id": "9bd71565-f0f5-43d8-812a-a4a7ba00ee5d",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca35140c-a470-4eca-a403-25ce3b3c6f73",
+              "name": "output",
+              "value": "Houve um erro inesperado.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        848
+      ],
+      "id": "07133c71-6f50-4372-8643-c31dea45f8a6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca35140c-a470-4eca-a403-25ce3b3c6f73",
+              "name": "output",
+              "value": "Atendimento atribuido com sucesso!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1152,
+        480
+      ],
+      "id": "e6386c60-3f00-4c81-a9c6-c01935d49d52",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('When Executed by Another Workflow').item.json.chat_id }}/toggle_status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"open\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        928,
+        496
+      ],
+      "id": "59849993-0792-4517-8d62-8870de145a03",
+      "name": "HTTP Request6",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4aXAiLt3AYjoyFrC",
+          "name": "SPX - Paulo"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('When Executed by Another Workflow').item.json.chat_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": {{ JSON.stringify($('When Executed by Another Workflow').item.json.resumo) }},\n  \"message_type\": \"outgoing\",\n  \"private\": true,\n  \"content_type\": \"text\"\n}",
+        "options": {}
+      },
+      "id": "5e36eada-af4a-45b7-b1c9-a38296b98ec2",
+      "name": "Envia Mensagem Inteira",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -48,
+        336
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IPAsWeAlLuob4Lsy",
+          "name": "SPX - Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chat.simplexsolucoes.com.br/api/v1/accounts/6/conversations/{{ $('When Executed by Another Workflow').item.json.chat_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": {{ JSON.stringify($('When Executed by Another Workflow').item.json.sugestao) }},\n  \"message_type\": \"outgoing\",\n  \"private\": true,\n  \"content_type\": \"text\"\n}",
+        "options": {}
+      },
+      "id": "a19e2cfc-5063-4aac-a383-952d5249e740",
+      "name": "Envia Mensagem Inteira1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        304
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IPAsWeAlLuob4Lsy",
+          "name": "SPX - Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6c3dc99b-96d9-44f9-8c45-a07480760690",
+              "leftValue": "={{ $('When Executed by Another Workflow').item.json.sugestao }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        320
+      ],
+      "id": "eebb6c77-f149-48f1-aebc-d6b5138d2f13",
+      "name": "If"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "sender_id": 10685,
+          "chat_id": 2159,
+          "resumo": "📋 Resumo do pré-atendimento\n\nCliente: Paulo Seze\nDemanda: Locação\nDetalhes: Procura casa em Sinop, orçamento até R$ 2.000, sem preferência de bairro.",
+          "sugestao": "🔍 Imóveis encontrados\n\n5 casas para alugar em Sinop até R$ 2.000:\n• Cód. 9561 — Casa no Jardim Ouro, R$ 2.000/mês — https://www.toziimoveis.com.br/imovel/9561\n• Cód. 9531 — Casa no Residencial Daury Riva, R$ 1.800/mês — https://www.toziimoveis.com.br/imovel/9531\n• Cód. 9521 — Casa no Residencial Rhodivi Bella Morada III, R$ 1.800/mês — https://www.toziimoveis.com.br/imovel/9521\n• Cód. 8050 — Casa no Villa Toscana, R$ 1.800/mês — https://www.toziimoveis.com.br/imovel/8050\n• Cód. 9160 — Casa no Jardim Oriente, R$ 1.550/mês — https://www.toziimoveis.com.br/imovel/9160"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Envia Mensagem Inteira",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Mensagem Inteira": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Envia Mensagem Inteira1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Mensagem Inteira1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a8e4a2d0-2df0-422d-963d-a44eb2f7de6c",
+  "meta": {
+    "instanceId": "7a12360371cd82993f73405f220eb9edccfa0db9213a4df540b65c6b7e870c14"
+  },
+  "id": "PTHEJTw8ZWkgXt7F",
+  "tags": []
+}

@@ -1,0 +1,39 @@
+{
+  "event": "message_created",
+  "message_type": "incoming",
+  "private": false,
+  "content": "",
+  "attachments": [
+    {
+      "file_type": "image",
+      "data_url": "https://chat.simplexsolucoes.com.br/rails/active_storage/blobs/photo.jpg",
+      "thumb_url": "https://chat.simplexsolucoes.com.br/rails/active_storage/blobs/photo_thumb.jpg",
+      "file_size": 313301
+    }
+  ],
+  "source_id": "wamid.ABGSOFkxNTkw",
+  "id": 592910,
+  "content_attributes": {},
+  "sender": {
+    "identifier": "556696350491@s.whatsapp.net",
+    "phone_number": "+5566996350491",
+    "name": "Paulo Seze",
+    "id": 10685,
+    "custom_attributes": {}
+  },
+  "conversation": {
+    "id": 2159,
+    "inbox_id": 91,
+    "status": "open",
+    "labels": [],
+    "custom_attributes": {},
+    "contact_inbox": {
+      "source_id": "5566996350491"
+    },
+    "meta": {
+      "sender": {"name": "Paulo Seze", "id": 10685},
+      "assignee": null
+    },
+    "messages": []
+  }
+}

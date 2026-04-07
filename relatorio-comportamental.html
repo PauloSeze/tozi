@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>SPXIA — Tozi Imobiliária — Análise Comportamental da IA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafaf9;
+  --white:#ffffff;
+  --black:#111111;
+  --gray-900:#1a1a1e;
+  --gray-700:#3a3a3f;
+  --gray-500:#6b6b72;
+  --gray-300:#b0b0b6;
+  --gray-100:#ececee;
+  --red:#ED3237;
+  --red-light:#fef2f2;
+  --red-soft:rgba(237,50,55,0.08);
+  --blue:#2B435B;
+  --blue-light:#f0f4f8;
+  --green:#38a169;
+  --green-light:#f0fff4;
+  --amber:#d97706;
+  --amber-light:#fffbeb;
+  --font-display:'DM Serif Display',Georgia,serif;
+  --font-body:'Outfit',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+html{font-size:15px}
+body{font-family:var(--font-body);color:var(--gray-900);line-height:1.6;background:var(--white)}
+
+.slide{
+  width:210mm;min-height:297mm;
+  padding:50px 60px;
+  page-break-after:always;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.slide:last-child{page-break-after:auto}
+
+.slide::after{
+  content:'SPXIA — Tozi Imobiliária — Análise Comportamental';
+  position:absolute;bottom:28px;left:60px;
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:var(--gray-300);letter-spacing:0.08em;
+}
+
+.slide-num{
+  position:absolute;bottom:28px;right:60px;
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:var(--gray-300);
+}
+
+/* COVER */
+.cover{
+  background:var(--gray-900);color:var(--white);
+  justify-content:center;align-items:flex-start;
+  padding:60px 70px;
+}
+.cover::after{color:rgba(255,255,255,0.2) !important}
+.cover-logo{height:36px;margin-bottom:60px;opacity:0.9}
+.cover-label{
+  font-family:var(--font-mono);font-size:0.65rem;font-weight:500;
+  color:var(--red);letter-spacing:0.12em;text-transform:uppercase;
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.cover-label::before{content:'';width:24px;height:1.5px;background:var(--red)}
+.cover h1{
+  font-family:var(--font-display);font-size:2.9rem;
+  font-weight:400;line-height:1.08;margin-bottom:10px;
+}
+.cover h1 em{font-style:italic;color:var(--red)}
+.cover-sub{
+  font-size:1rem;color:rgba(255,255,255,0.5);
+  max-width:460px;margin:20px 0 50px;font-weight:300;line-height:1.7;
+}
+.cover-stats{
+  display:flex;gap:40px;padding-top:30px;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+.cover-stat-val{
+  font-family:var(--font-display);font-size:2rem;line-height:1;
+}
+.cover-stat-val span{color:var(--red)}
+.cover-stat-lbl{
+  font-family:var(--font-mono);font-size:0.55rem;
+  color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;
+  margin-top:4px;
+}
+.cover-bottom{
+  position:absolute;bottom:40px;left:70px;right:70px;
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
+.cover-author{font-family:var(--font-mono);font-size:0.65rem;color:rgba(255,255,255,0.35)}
+.cover-date{font-family:var(--font-mono);font-size:0.65rem;color:rgba(255,255,255,0.35)}
+
+/* HEADERS */
+.slide-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:28px;padding-bottom:14px;
+  border-bottom:1.5px solid var(--gray-100);
+}
+.slide-header-num{
+  font-family:var(--font-mono);font-size:0.6rem;font-weight:700;
+  color:var(--white);background:var(--red);
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+}
+.slide-header-text{
+  font-family:var(--font-mono);font-size:0.65rem;font-weight:600;
+  color:var(--gray-500);letter-spacing:0.08em;text-transform:uppercase;
+}
+
+.slide h2{
+  font-family:var(--font-display);font-size:1.85rem;
+  font-weight:400;line-height:1.15;margin-bottom:8px;
+}
+.slide h2 em{font-style:italic;color:var(--red)}
+.slide-intro{
+  font-size:0.82rem;color:var(--gray-500);max-width:480px;
+  margin-bottom:22px;line-height:1.7;font-weight:300;
+}
+
+/* TABLES */
+table{
+  width:100%;border-collapse:collapse;
+  margin:8px 0 12px 0;font-size:0.72rem;
+}
+th{
+  background:var(--gray-900);color:var(--white);
+  padding:7px 10px;text-align:left;
+  font-family:var(--font-mono);font-size:0.6rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.05em;
+}
+td{
+  padding:6px 10px;border-bottom:1px solid var(--gray-100);
+  vertical-align:top;line-height:1.5;
+}
+tr:nth-child(even) td{background:var(--bg)}
+td strong{color:var(--gray-900)}
+
+/* CHAT BUBBLES */
+.chat{
+  margin:10px 0;
+  display:flex;flex-direction:column;gap:6px;
+}
+.chat-msg{
+  max-width:88%;padding:8px 14px;
+  border-radius:12px;font-size:0.72rem;line-height:1.55;
+  position:relative;
+}
+.chat-msg.client{
+  background:#e8f5e9;color:#1b5e20;
+  align-self:flex-start;
+  border-bottom-left-radius:4px;
+}
+.chat-msg.ia{
+  background:#e3f2fd;color:#0d47a1;
+  align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+.chat-msg.ia.bad{
+  background:var(--red-light);color:#b71c1c;
+  border:1px solid rgba(237,50,55,0.2);
+}
+.chat-label{
+  font-family:var(--font-mono);font-size:0.52rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.06em;
+  margin-bottom:2px;opacity:0.6;
+}
+
+/* CARDS */
+.card-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin:10px 0;
+}
+.card{
+  background:var(--bg);border:1px solid var(--gray-100);
+  border-radius:8px;padding:14px 16px;
+}
+.card-icon{font-size:1.2rem;margin-bottom:6px}
+.card h4{
+  font-size:0.78rem;font-weight:700;margin-bottom:4px;
+  color:var(--gray-900);
+}
+.card p{font-size:0.68rem;color:var(--gray-500);line-height:1.55}
+
+/* SEVERITY BADGES */
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-family:var(--font-mono);font-size:0.55rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.04em;
+}
+.badge.critical{background:var(--red);color:white}
+.badge.high{background:#f97316;color:white}
+.badge.medium{background:var(--amber);color:white}
+.badge.low{background:var(--gray-300);color:var(--gray-900)}
+
+/* PROBLEM BLOCK */
+.problem{
+  margin-bottom:14px;padding:12px 16px;
+  border-left:3px solid var(--red);
+  background:var(--bg);border-radius:0 8px 8px 0;
+  page-break-inside:avoid;
+}
+.problem h3{
+  font-size:0.82rem;font-weight:700;margin-bottom:4px;
+  display:flex;align-items:center;gap:8px;
+}
+.problem p{font-size:0.72rem;color:var(--gray-700);line-height:1.6;margin-top:4px}
+
+/* GOOD BLOCK */
+.good{
+  margin-bottom:10px;padding:12px 16px;
+  border-left:3px solid var(--green);
+  background:var(--green-light);border-radius:0 8px 8px 0;
+}
+.good h4{font-size:0.78rem;font-weight:700;color:var(--green);margin-bottom:2px}
+.good p{font-size:0.7rem;color:var(--gray-700);line-height:1.55}
+
+/* ACTION TABLE */
+.action-table td:first-child{font-weight:600;width:65%}
+.action-table .status-planned{
+  color:var(--blue);font-weight:600;
+  font-family:var(--font-mono);font-size:0.62rem;
+}
+
+/* QUESTION BLOCK */
+.question{
+  margin-bottom:10px;padding:14px 16px;
+  background:var(--blue-light);border:1px solid rgba(43,67,91,0.12);
+  border-radius:8px;page-break-inside:avoid;
+}
+.question-num{
+  font-family:var(--font-mono);font-size:0.6rem;font-weight:700;
+  color:var(--blue);margin-bottom:4px;
+}
+.question p{font-size:0.74rem;color:var(--gray-700);line-height:1.6}
+
+/* HIGHLIGHT BOX */
+.highlight{
+  background:var(--amber-light);border:1px solid rgba(217,119,6,0.2);
+  border-radius:8px;padding:12px 16px;margin:10px 0;
+}
+.highlight p{font-size:0.72rem;color:var(--gray-700);line-height:1.6}
+.highlight strong{color:var(--amber)}
+
+/* SECTION DIVIDER */
+.section-divider{
+  margin:18px 0 12px;padding:6px 14px;
+  background:var(--gray-900);color:var(--white);
+  border-radius:6px;font-family:var(--font-mono);
+  font-size:0.62rem;font-weight:600;letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+
+/* FOOTER NOTE */
+.footer-note{
+  margin-top:auto;padding-top:20px;
+  border-top:1px solid var(--gray-100);
+  font-size:0.65rem;color:var(--gray-500);line-height:1.6;
+  font-style:italic;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SLIDE 1 — COVER
+     ============================================================ -->
+<div class="slide cover">
+  <img src="logo_spxia.png" alt="SPXIA" class="cover-logo">
+  <div class="cover-label">Relatório de Análise</div>
+  <h1>Comportamento da <em>IA</em><br>no Atendimento</h1>
+  <p class="cover-sub">Análise de conversas reais da Clara com clientes nos canais comercial e de suporte. Problemas identificados, o que funciona e próximos passos.</p>
+  <div class="cover-stats">
+    <div>
+      <div class="cover-stat-val">~<span>20</span></div>
+      <div class="cover-stat-lbl">Conversas analisadas</div>
+    </div>
+    <div>
+      <div class="cover-stat-val"><span>7</span></div>
+      <div class="cover-stat-lbl">Problemas encontrados</div>
+    </div>
+    <div>
+      <div class="cover-stat-val"><span>2</span></div>
+      <div class="cover-stat-lbl">Canais auditados</div>
+    </div>
+    <div>
+      <div class="cover-stat-val">5.246</div>
+      <div class="cover-stat-lbl">Conversas nos canais</div>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <div class="cover-author">SimplexIA (SPXIA) — Sinop/MT</div>
+    <div class="cover-date">27 de março de 2026</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 2 — CONTEXTO + O QUE FUNCIONA
+     ============================================================ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">01</div>
+    <div class="slide-header-text">Contexto e Pontos Positivos</div>
+  </div>
+  <div class="slide-num">02</div>
+
+  <h2>O que <em>analisamos</em></h2>
+  <p class="slide-intro">Extraímos e lemos conversas reais da IA com clientes via API do ChatWoot, cobrindo os dois canais de atendimento da Tozi.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">📞</div>
+      <h4>Telefone Fixo (Comercial)</h4>
+      <p>3.913 conversas — busca de imóveis, locação, venda, captação. A IA atua como pré-atendimento antes do consultor.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔧</div>
+      <h4>Prestação de Serviços (Suporte)</h4>
+      <p>1.333 conversas — manutenção, boletos, contratos, desocupação. A IA recebe o primeiro contato e encaminha.</p>
+    </div>
+  </div>
+
+  <div class="section-divider">O que está funcionando bem</div>
+
+  <div class="good">
+    <h4>Acolhimento natural</h4>
+    <p>A primeira impressão é boa — os clientes interagem sem estranhamento e a conversa flui de forma natural.</p>
+  </div>
+  <div class="good">
+    <h4>Coleta de informações</h4>
+    <p>Na maioria dos casos, a IA entende o que o cliente precisa e organiza um resumo útil para o time.</p>
+  </div>
+  <div class="good">
+    <h4>Resumo interno para o time</h4>
+    <p>As notas privadas contêm informações ricas: nome, o que procura, preferências, faixa de valor, links de imóveis sugeridos.</p>
+  </div>
+  <div class="good">
+    <h4>Suporte direto</h4>
+    <p>Em casos simples (boleto não chegou, precisa falar com setor X), a IA coleta o problema e encaminha rapidamente.</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 3 — PROBLEMA 1: ADVOGADA DO CLIENTE
+     ============================================================ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">02</div>
+    <div class="slide-header-text">Problemas Identificados</div>
+  </div>
+  <div class="slide-num">03</div>
+
+  <div class="problem">
+    <h3><span class="badge critical">Crítico</span> A IA toma partido do cliente contra a imobiliária</h3>
+    <p>Em conversas de suporte onde o cliente está insatisfeito, a Clara se posiciona como aliada do cliente, validando reclamações e prometendo cobranças que não tem como cumprir.</p>
+  </div>
+
+  <p style="font-size:0.7rem;color:var(--gray-500);margin-bottom:8px;font-weight:600">Exemplo real — cliente com manutenção atrasada há 3 meses:</p>
+
+  <div class="chat">
+    <div class="chat-msg client">
+      <div class="chat-label">Cliente</div>
+      já faz 3 meses, isso é um absurdo, eu já arrumei tudo por conta, falta de respeito
+    </div>
+    <div class="chat-msg ia bad">
+      <div class="chat-label">Clara (IA)</div>
+      <strong>Você tem razão, Rafael</strong>… realmente já passou tempo demais. Vou cobrar <strong>prioridade máxima</strong> e pedir <strong>retorno imediato</strong>.
+    </div>
+    <div class="chat-msg client">
+      <div class="chat-label">Cliente</div>
+      eu to evitando de ir aí pq se eu for...
+    </div>
+    <div class="chat-msg ia bad">
+      <div class="chat-label">Clara (IA)</div>
+      Rafael, <strong>eu entendo que você esteja no limite, de verdade.</strong> Não precisa vir até aqui — deixa comigo que vou cobrar um retorno imediato.
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:14px">
+    <p><strong>O que está errado:</strong> A IA deu razão ao cliente ("você tem razão"), prometeu "prioridade máxima" e "retorno imediato" sem poder cumprir, e fingiu cobrar o time — criando expectativa que o time não consegue atender. Quando o humano assume, o cliente já chega revoltado.</p>
+  </div>
+
+  <div class="footer-note">
+    O correto: a IA deve ser empática ("entendi sua situação") sem dar opinião sobre quem tem razão, e encaminhar sem prometer prazos.
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 4 — PROBLEMA 2 e 3
+     ============================================================ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">02</div>
+    <div class="slide-header-text">Problemas Identificados</div>
+  </div>
+  <div class="slide-num">04</div>
+
+  <div class="problem">
+    <h3><span class="badge high">Alto</span> A IA não mostra imóveis quando o cliente pede</h3>
+    <p>No atendimento comercial, quando o cliente pede para ver opções, a IA não consegue mostrar nada — fica fazendo perguntas de qualificação sem entregar valor.</p>
+  </div>
+
+  <div class="chat">
+    <div class="chat-msg client">
+      <div class="chat-label">Cliente (3 vezes)</div>
+      me passe o que vocês tem
+    </div>
+    <div class="chat-msg ia bad">
+      <div class="chat-label">Clara (IA)</div>
+      Tem alguma preferência sobre a quantidade de quartos ou qualquer outra coisa que seja importante pra você?
+    </div>
+    <div class="chat-msg client">
+      <div class="chat-label">Cliente</div>
+      Se puderem me passar algumas opções eu agradeço
+    </div>
+    <div class="chat-msg ia bad">
+      <div class="chat-label">Clara (IA)</div>
+      Ótimo, vou anotar tudo! Qual prazo pra você se mudar?
+    </div>
+  </div>
+
+  <p style="font-size:0.7rem;color:var(--gray-500);margin:12px 0 4px">O cliente vai ficando frustrado porque quer ver imóveis e a IA só faz perguntas. Isso aconteceu em várias conversas. <strong>Estamos trabalhando para que a IA busque e mostre imóveis durante a conversa.</strong></p>
+
+  <div style="height:16px"></div>
+
+  <div class="problem">
+    <h3><span class="badge critical">Crítico</span> A IA responde pesquisas de NPS como conversa real</h3>
+    <p>Quando o sistema envia a pesquisa de satisfação ("De 0 a 10?"), a resposta do cliente com texto é interpretada como nova conversa.</p>
+  </div>
+
+  <div class="chat">
+    <div class="chat-msg ia" style="background:#f3e8ff;color:#6b21a8;align-self:flex-start;max-width:70%">
+      <div class="chat-label">Sistema</div>
+      De 0 a 10, qual é a nota que você avalia o meu atendimento?
+    </div>
+    <div class="chat-msg client">
+      <div class="chat-label">Cliente</div>
+      8, se fazer presente valoriza o empreendimento
+    </div>
+    <div class="chat-msg ia bad">
+      <div class="chat-label">Clara (IA)</div>
+      Oi! Parece que você está pensando em valorizar um empreendimento. Quer algumas dicas ou busca algum tipo de serviço específico?
+    </div>
+  </div>
+
+  <p style="font-size:0.7rem;color:var(--gray-500);margin-top:10px">A IA transformou uma resposta de NPS em um atendimento comercial. Confunde o cliente e gera trabalho desnecessário.</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 5 — PROBLEMAS 4, 5, 6, 7
+     ============================================================ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">02</div>
+    <div class="slide-header-text">Problemas Identificados</div>
+  </div>
+  <div class="slide-num">05</div>
+
+  <div class="problem">
+    <h3><span class="badge high">Alto</span> Cliente pede atendente humano e a IA não transfere</h3>
+    <p>Uma cliente pediu <strong>3 vezes</strong> "quero falar com atendente por gentileza" e a IA continuou respondendo automaticamente sem transferir para uma pessoa real.</p>
+  </div>
+
+  <div style="height:10px"></div>
+
+  <div class="problem">
+    <h3><span class="badge medium">Médio</span> A IA confunde pessoas mencionadas com funcionários</h3>
+    <p>Uma cliente disse que esteve na empresa com a "Tatiele" (cônjuge, titular de contrato). A IA entendeu que Tatiele era uma funcionária e disse que atribuiria o atendimento a ela. A IA não conhece o quadro de funcionários.</p>
+  </div>
+
+  <div style="height:10px"></div>
+
+  <div class="problem">
+    <h3><span class="badge medium">Médio</span> Qualificação demorada quando o time está disponível</h3>
+    <p>Dentro do horário comercial, a IA deveria ser ágil. Em várias conversas, fez perguntas extras mesmo quando já tinha informação suficiente.</p>
+  </div>
+
+  <div class="chat" style="margin-top:6px">
+    <div class="chat-msg client" style="max-width:92%">
+      <div class="chat-label">Cliente</div>
+      Preciso um apartamento em Sinop, perto do Hospital Santo Antônio, gostei do Edifício Florença. Até R$ 2.800 com condomínio.
+    </div>
+    <div class="chat-msg ia bad" style="max-width:75%">
+      <div class="chat-label">Clara (IA)</div>
+      Qual seria seu orçamento para o aluguel? E tem algum bairro de preferência?
+    </div>
+  </div>
+
+  <p style="font-size:0.68rem;color:var(--gray-500);margin-top:4px;font-style:italic">Ambas informações já tinham sido dadas pela cliente.</p>
+
+  <div style="height:10px"></div>
+
+  <div class="problem">
+    <h3><span class="badge low">Baixo</span> Uso excessivo de emojis</h3>
+    <p>Quase toda despedida tem 😊, 😉 ou 🥰. Embora não seja grave, soa artificial e repetitivo. A IA deveria usar emojis com mais parcimônia.</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 6 — AÇÕES + PERGUNTAS
+     ============================================================ -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-header-num">03</div>
+    <div class="slide-header-text">Ações e Próximos Passos</div>
+  </div>
+  <div class="slide-num">06</div>
+
+  <h2>O que já estamos <em>providenciando</em></h2>
+  <p class="slide-intro">Todas as correções abaixo já estão no planejamento de desenvolvimento.</p>
+
+  <table class="action-table">
+    <thead>
+      <tr>
+        <th>Ação</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Corrigir filtro de NPS</strong> para não acionar a IA indevidamente</td>
+        <td class="status-planned">Planejado</td>
+      </tr>
+      <tr>
+        <td><strong>Ajustar tom no suporte:</strong> empática mas neutra, sem tomar partido</td>
+        <td class="status-planned">Planejado</td>
+      </tr>
+      <tr>
+        <td><strong>Transferência imediata</strong> quando cliente pedir atendente humano</td>
+        <td class="status-planned">Planejado</td>
+      </tr>
+      <tr>
+        <td><strong>Permitir que a IA mostre imóveis</strong> durante a conversa</td>
+        <td class="status-planned">Planejado</td>
+      </tr>
+      <tr>
+        <td><strong>Consultar lista de colaboradores</strong> para evitar confusão de nomes</td>
+        <td class="status-planned">Planejado</td>
+      </tr>
+      <tr>
+        <td><strong>Atualizar base de conhecimento</strong> com respostas do questionário</td>
+        <td class="status-planned">Planejado</td>
+      </tr>
+      <tr>
+        <td><strong>Atualizar nome do contato</strong> quando a IA confirmar com o cliente</td>
+        <td class="status-planned">Planejado</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="height:18px"></div>
+
+  <h2 style="font-size:1.5rem">Pedimos a <em>colaboração</em> de vocês</h2>
+  <p class="slide-intro" style="margin-bottom:14px">Suas respostas nos ajudam a calibrar melhor a IA.</p>
+
+  <div class="question">
+    <div class="question-num">Pergunta 1</div>
+    <p>Vocês identificam <strong>outros comportamentos problemáticos</strong> da IA que não foram mencionados aqui?</p>
+  </div>
+  <div class="question">
+    <div class="question-num">Pergunta 2</div>
+    <p><strong>Sobre o tom no suporte:</strong> qual seria o tom ideal da IA quando o cliente reclama? Algum exemplo de como vocês gostariam que ela respondesse?</p>
+  </div>
+  <div class="question">
+    <div class="question-num">Pergunta 3</div>
+    <p>Ainda não recebemos informações sobre <strong>venda de imóveis</strong> (financiamento, FGTS, documentação, corretagem). Precisamos disso para a base de conhecimento.</p>
+  </div>
+  <div class="question">
+    <div class="question-num">Pergunta 4</div>
+    <p>Algum <strong>outro tipo de informação</strong> que os clientes costumam perguntar e que a IA deveria saber responder?</p>
+  </div>
+  <div class="question">
+    <div class="question-num">Pergunta 5</div>
+    <p>Hoje a IA encaminha para uma pessoa fixa. Gostariam de um <strong>rodízio entre consultores</strong>? Se sim, quais regras?</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 7 — ENCERRAMENTO
+     ============================================================ -->
+<div class="slide" style="justify-content:center;align-items:center;text-align:center">
+  <div class="slide-num">07</div>
+
+  <img src="logo_spxia.png" alt="SPXIA" style="height:32px;opacity:0.6;margin-bottom:40px">
+  <h2 style="font-size:2.2rem;margin-bottom:12px">Obrigado pela <em>colaboração</em></h2>
+  <p style="font-size:0.9rem;color:var(--gray-500);max-width:400px;line-height:1.7;font-weight:300">
+    Suas respostas são essenciais para que a IA atenda cada vez melhor os clientes da Tozi.
+  </p>
+  <div style="margin-top:50px;padding-top:30px;border-top:1px solid var(--gray-100)">
+    <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray-300)">
+      SimplexIA — Inteligência Artificial para Negócios<br>
+      Sinop/MT — Março 2026
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

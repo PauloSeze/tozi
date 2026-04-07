@@ -1,0 +1,18 @@
+{
+  "event": "conversation_status_changed",
+  "id": 2159,
+  "status": "resolved",
+  "inbox_id": 91,
+  "labels": [],
+  "custom_attributes": {},
+  "messages": [
+    {
+      "content": "De 0 a 10, como você avalia o nosso atendimento?",
+      "content_attributes": {"nps_survey": true}
+    }
+  ],
+  "meta": {
+    "sender": {"name": "Paulo Seze", "id": 10685},
+    "assignee": {"name": "Camila", "id": 66}
+  }
+}

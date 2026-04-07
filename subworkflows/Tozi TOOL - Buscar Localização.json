@@ -1,0 +1,102 @@
+{
+  "name": "Tozi TOOL - Buscar Localização",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"local\": \"mercado central\"\n}"
+      },
+      "id": "8a4bb23a-4f05-42f8-8e18-3e649e79f78c",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -32,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/geocode/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "address",
+              "value": "=Fasipe, Sinop"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyATs4g6Hs1eM_6aPpqc7VJfOtdM4BJuGoc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        368
+      ],
+      "id": "c08ccb0e-2d97-4a52-b533-707ef5151d27",
+      "name": "HTTP Request32"
+    },
+    {
+      "parameters": {
+        "jsCode": "const radiusKm = 3; // raio em km\n\nconst body = $input.first().json;\nconst payload = Array.isArray(body) ? body[0] : body;\n\nif (!payload || !payload.results || !payload.results[0]) {\n  throw new Error('Resposta do Maps não tem results[0]');\n}\n\nconst loc = payload.results[0].geometry.location;\nconst lat0 = loc.lat;\nconst lng0 = loc.lng;\n\n// --- bbox numérico ---\nconst radiusMeters = radiusKm * 1000;\nconst degPerMeterLat = 1 / 111320;\nconst latRad = lat0 * Math.PI / 180;\n\nconst deltaLat = radiusMeters * degPerMeterLat;\nconst degPerMeterLng = 1 / (111320 * Math.cos(latRad));\nconst deltaLng = radiusMeters * degPerMeterLng;\n\nconst latMinNum = lat0 - deltaLat;\nconst latMaxNum = lat0 + deltaLat;\nconst lngMinNum = lng0 - deltaLng;\nconst lngMaxNum = lng0 + deltaLng;\n\n// --- função que garante ORDEM DE STRING correta p/ Vista ---\nfunction rangeAsStrings(minNum, maxNum) {\n  let a = minNum.toString();\n  let b = maxNum.toString();\n  if (a > b) {\n    [a, b] = [b, a]; // garante que a < b como string\n  }\n  return [a, b];\n}\n\nconst [latMinStr, latMaxStr] = rangeAsStrings(latMinNum, latMaxNum);\nconst [lngMinStr, lngMaxStr] = rangeAsStrings(lngMinNum, lngMaxNum);\n\nreturn [\n  {\n    json: {\n      Latitude: [latMinStr, latMaxStr],\n      Longitude: [lngMinStr, lngMaxStr],\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        368
+      ],
+      "id": "2347f27b-b426-46eb-a989-2d4f6dcb2778",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "local": "unifasipe sinop mt"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request32",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request32": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f2fee780-ae64-402b-a697-ecc3a51987f8",
+  "meta": {
+    "instanceId": "7a12360371cd82993f73405f220eb9edccfa0db9213a4df540b65c6b7e870c14"
+  },
+  "id": "dTUGxaH5AwEDFen0",
+  "tags": []
+}
