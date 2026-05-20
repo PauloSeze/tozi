@@ -142,3 +142,16 @@ class SpxClient:
         r = self._client.post(url, json={"custom_attributes": attrs})
         r.raise_for_status()
         return r.json()
+
+    def add_labels(self, conversation_id: int, new_labels: list[str]) -> list[str]:
+        """Adiciona labels SEM apagar as existentes (POST do chatwoot substitui a lista inteira)."""
+        url = f"{self.base_url}/api/v1/accounts/{self.account_id}/conversations/{conversation_id}/labels"
+        current = self._client.get(url)
+        current.raise_for_status()
+        existing = current.json().get("payload", []) or []
+        merged = sorted(set(existing) | set(new_labels))
+        if merged == sorted(existing):
+            return existing
+        r = self._client.post(url, json={"labels": merged})
+        r.raise_for_status()
+        return merged

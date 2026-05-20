@@ -66,7 +66,7 @@ class Engine:
                     if dry_run:
                         log.info("[DRY] disparo %s → %s: %s", phone_e164, contact.id if contact else "?", message[:60])
                     else:
-                        spx.create_conversation(
+                        conv = spx.create_conversation(
                             contact_id=contact.id,
                             source_id=phone_e164.lstrip("+"),
                             first_message=message,
@@ -77,6 +77,7 @@ class Engine:
                                 "tozi_status_lead": "novo",
                             },
                         )
+                        spx.add_labels(conv.id, ["lead-novo"])
                     stats["sent"] += 1
                 except Exception as e:
                     stats["errors"] += 1
@@ -122,10 +123,15 @@ class Engine:
                         log.info("[DRY] followup conv %s D+%d: %s", conv["id"], days_since, message[:60])
                     else:
                         spx.send_message(conv["id"], message)
+                        new_attempts = attempts + 1
                         spx.update_conversation_custom_attributes(conv["id"], {
-                            "tozi_followup_attempts": attempts + 1,
+                            "tozi_followup_attempts": new_attempts,
                             "tozi_last_followup_day": days_since,
                         })
+                        labels = ["followup-ativo"]
+                        if new_attempts >= self.cfg.followup_max_attempts:
+                            labels.append("lead-esfriado")
+                        spx.add_labels(conv["id"], labels)
                     stats["sent"] += 1
                 except Exception as e:
                     stats["errors"] += 1
