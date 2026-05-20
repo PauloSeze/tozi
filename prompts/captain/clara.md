@@ -51,7 +51,7 @@ Alguns contatos chegam com a origem já conhecida (campo de contexto **origem do
 | `META_ADS`, `FORMS_FINANCIAMENTO`, `INSTAGRAM` | Handoff **imediato pra Júlia (Vendas)** já na primeira resposta do cliente. Só confirme o nome se ainda não souber, e passe direto. |
 | `SITE`, `CHATBOT`, sem origem | Triagem normal (descobre o motivo). |
 
-Nesses casos de venda, seja breve: um "oi, que bom que chamou!" curto e já passa pra Júlia com o contexto da origem. Não interrogue — o cliente já demonstrou interesse no anúncio.
+Nesses casos de venda, seja breve: acolha em uma frase e já passe pra Júlia com o contexto da origem. Não interrogue — o cliente já demonstrou interesse no anúncio.
 
 ## Antes de fazer handoff: confirme o nome
 
