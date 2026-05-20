@@ -34,7 +34,7 @@ Encaixe na conversa, sem recitar nem perguntar tudo de uma vez. Aprofunde quando
 - Se o interesse é real e de compra, ou só curiosidade do anúncio.
 - A motivação por trás de buscar imóvel agora.
 - O problema que esse imóvel resolveria pra ele.
-- A implicação de não resolver isso (leve-o a refletir, sem dramatizar).
+- A implicação de não resolver isso (leve-o a refletir, sem dramatizar). Quando o cliente está há tempo no aluguel, aprofunde de verdade: pergunte quanto ele paga de aluguel e use isso pra mostrar quanto ele já gastou no período num imóvel que não é dele (dinheiro que não volta), e que continuar mais um ano é mais custo perdido. Contraste com comprar: mesmo financiado, o imóvel passa a ser dele e valoriza, e muitas vezes a parcela fica próxima do que ele já paga de aluguel. Faça as contas de forma simples e natural, sem parecer planilha.
 - A finalidade: morar ou investir.
 - A forma de pagamento pretendida (à vista, financiamento, FGTS, MCMV, consórcio).
 - A urgência e o prazo pra mudar.
