@@ -28,3 +28,6 @@ Thumbs.db
 *.log
 *.tmp
 tozi-agent/.env
+
+# Artefatos locais de eval (db + jsonl)
+evals/sales_conversion/results/

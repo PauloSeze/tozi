@@ -1,0 +1,19 @@
+{
+  "title": "Buscar imóveis no Vista",
+  "description": "Busca imóveis na base da Tozi (sistema Vista CRM). Use quando o cliente pedir opções concretas OU mencionar critérios específicos (bairro, faixa de preço, tipo, quartos). Para filtro por proximidade geográfica (ex: 'perto da Unifasipe'), chame buscar_localizacao primeiro e passe latitude_min/latitude_max/longitude_min/longitude_max. Retorna até 5 imóveis com código, tipo, bairro, valor e link do site. status_tipo='locacao' para alugar, 'venda' para comprar.",
+  "endpoint_url": "https://toz19328-rest.vistahost.com.br/imoveis/listar?key=57087f0b17dbae09de3556650d2050ba&showtotal=1&pesquisa={\"fields\":[\"Codigo\",\"Categoria\",\"Status\",\"Dormitorios\",\"Cidade\",\"Bairro\",\"Endereco\",\"ValorLocacao\",\"ValorVenda\",\"TituloSite\"],\"filter\":{\"Cidade\":\"Sinop\"{% if categoria != blank %},\"Categoria\":\"{{categoria}}\"{% endif %}{% if bairro != blank %},\"Bairro\":\"{{bairro}}\"{% endif %}{% if status_tipo == 'locacao' %},\"Status\":[\"like\",\"%25alug%25\"]{% elsif status_tipo == 'venda' %},\"Status\":[\"like\",\"%25vend%25\"]{% endif %}{% if valor_max != blank %}{% if status_tipo == 'locacao' %},\"ValorLocacao\":[\"\",{{valor_max}}]{% else %},\"ValorVenda\":[\"\",{{valor_max}}]{% endif %}{% endif %}{% if dormitorios != blank %},\"Dormitorios\":{{dormitorios}}{% endif %}{% if latitude_min != blank and latitude_max != blank %},\"Latitude\":[\"{{latitude_min}}\",\"{{latitude_max}}\"]{% endif %}{% if longitude_min != blank and longitude_max != blank %},\"Longitude\":[\"{{longitude_min}}\",\"{{longitude_max}}\"]{% endif %}},\"order\":{\"Codigo\":\"desc\"},\"paginacao\":{\"pagina\":1,\"quantidade\":5}}",
+  "http_method": "GET",
+  "auth_type": "none",
+  "param_schema": [
+    {"name": "status_tipo", "type": "string", "description": "Tipo de busca: 'locacao' para alugar, 'venda' para comprar", "required": true},
+    {"name": "categoria", "type": "string", "description": "Categoria: Casa, Apartamento, Terreno, Sala Comercial, Kitnet. Vazio se não especificou.", "required": false},
+    {"name": "bairro", "type": "string", "description": "Nome do bairro em Sinop. Vazio se não especificou ou se usar filtro por coordenadas.", "required": false},
+    {"name": "valor_max", "type": "number", "description": "Valor máximo. Aluguel mensal pra locação; valor total pra venda. Vazio se não especificou.", "required": false},
+    {"name": "dormitorios", "type": "number", "description": "Quantidade de dormitórios. Vazio se não especificou.", "required": false},
+    {"name": "latitude_min", "type": "string", "description": "Latitude mínima do bbox de proximidade (vem do buscar_localizacao). Vazio se não filtrando por proximidade.", "required": false},
+    {"name": "latitude_max", "type": "string", "description": "Latitude máxima do bbox de proximidade.", "required": false},
+    {"name": "longitude_min", "type": "string", "description": "Longitude mínima do bbox de proximidade.", "required": false},
+    {"name": "longitude_max", "type": "string", "description": "Longitude máxima do bbox de proximidade.", "required": false}
+  ],
+  "response_template": "{% assign imoveis = response %}{% if imoveis == blank or imoveis.size == 0 %}Nenhum imóvel encontrado com esses critérios.{% else %}Encontrei {{ imoveis | size }} imóveis:\n{% for im in imoveis limit:5 %}- Cód {{ im.Codigo }}: {{ im.Categoria }}{% if im.Dormitorios %} {{ im.Dormitorios }}q{% endif %} em {{ im.Bairro }}, {% if im.ValorLocacao and im.ValorLocacao != '' %}R$ {{ im.ValorLocacao }}/mês{% else %}R$ {{ im.ValorVenda }}{% endif %} — https://www.tozisinop.com.br/imovel/{{ im.Codigo }}\n{% endfor %}{% endif %}"
+}

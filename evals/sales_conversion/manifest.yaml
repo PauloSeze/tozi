@@ -1,0 +1,18 @@
+id: tozi_sales_conversion_diagnostics
+type: custom
+name: "Tozi — Diagnóstico de Conversão de Vendas/Locação"
+description: "Análise de objeções, bloqueios operacionais, dúvidas, falhas conversacionais e funil para conversas IA-cliente em imobiliária (locação/venda residencial e comercial)."
+adapted_from: "hits-eval-export / sales_conversion_diagnostics (iFood / deep-eval-max framework)"
+target_agents:
+  - Clara (triagem)
+  - Júlia (vendas)
+  - Bruna (locação)
+  - Letícia (suporte)
+funnel_stages:
+  - FIRST_CONTACT
+  - TRIAGE
+  - QUALIFICATION
+  - PROPERTY_DISCUSSION
+  - OBJECTION
+  - VISIT_NEGOTIATION
+  - PRE_DEAL

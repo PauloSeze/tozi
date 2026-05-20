@@ -1,0 +1,11 @@
+{
+  "title": "Buscar localização (geocoding)",
+  "description": "Converte uma referência geográfica em Sinop/MT (ex: 'Unifasipe', 'Hospital Regional', 'Shopping') em coordenadas + bbox de proximidade ~3km. Use quando o cliente mencionar referência geográfica e você precisar buscar imóveis próximos. O output já vem com latitude_min/max e longitude_min/max prontos pra passar pro buscar_imoveis_vista.",
+  "endpoint_url": "https://maps.googleapis.com/maps/api/geocode/json?address={{local}} sinop mt&key=AIzaSyATs4g6Hs1eM_6aPpqc7VJfOtdM4BJuGoc",
+  "http_method": "GET",
+  "auth_type": "none",
+  "param_schema": [
+    {"name": "local", "type": "string", "description": "Referência geográfica (ex: 'Unifasipe', 'Hospital Regional Sinop', 'Shopping Sinop')", "required": true}
+  ],
+  "response_template": "{% assign r = response.results | first %}{% if r == blank %}Não encontrei essa referência geográfica.{% else %}{% assign lat = r.geometry.location.lat %}{% assign lng = r.geometry.location.lng %}{% assign delta = 0.027 %}{% assign lat_min = lat | minus: delta %}{% assign lat_max = lat | plus: delta %}{% assign lng_min = lng | minus: delta %}{% assign lng_max = lng | plus: delta %}Encontrei: {{ r.formatted_address }}\nCoordenadas: lat={{lat}}, lng={{lng}}\n\nPara buscar imóveis num raio de ~3km use estes filtros no buscar_imoveis_vista:\n- latitude_min: {{lat_min}}\n- latitude_max: {{lat_max}}\n- longitude_min: {{lng_min}}\n- longitude_max: {{lng_max}}{% endif %}"
+}

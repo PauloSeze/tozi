@@ -1,0 +1,26 @@
+{
+  "config": {
+    "product_name": "Tozi Imóveis",
+    "temperature": 0.7,
+    "feature_faq": true,
+    "feature_memory": true,
+    "feature_contact_attributes": true,
+    "handoff_message": "Beleza! Vou passar você pro nosso time, que continua o atendimento por aqui mesmo. Em instantes alguém te responde."
+  },
+  "behavior": {
+    "debounce_seconds": 15,
+    "router": {"skip_groups": true, "only_contact_phones": ["+5566996247866"], "skip_labels": ["atendimento"], "skip_after_human_response": true},
+    "business_hours": {"enabled": true, "timezone": "America/Cuiaba", "schedule": [
+      {"day": 0, "ranges": []},
+      {"day": 1, "ranges": [{"start": "07:30", "end": "11:30"}, {"start": "13:30", "end": "17:30"}]},
+      {"day": 2, "ranges": [{"start": "07:30", "end": "11:30"}, {"start": "13:30", "end": "17:30"}]},
+      {"day": 3, "ranges": [{"start": "07:30", "end": "11:30"}, {"start": "13:30", "end": "17:30"}]},
+      {"day": 4, "ranges": [{"start": "07:30", "end": "11:30"}, {"start": "13:30", "end": "17:30"}]},
+      {"day": 5, "ranges": [{"start": "07:30", "end": "11:30"}, {"start": "13:30", "end": "17:30"}]},
+      {"day": 6, "ranges": [{"start": "09:00", "end": "11:30"}]}
+    ]},
+    "humanizer": {"enabled": true, "max_chars": 280, "delay_ms": 500},
+    "dedup": {"enabled": true, "ttl_seconds": 120},
+    "media_pipeline": {"audio_transcription": true, "image_description": true}
+  }
+}

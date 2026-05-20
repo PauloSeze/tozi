@@ -1,0 +1,124 @@
+{
+  "interest_level": {
+    "type": "str",
+    "description": "Nível de interesse do cliente: HIGH | MEDIUM | LOW | UNDETERMINED"
+  },
+  "objections": {
+    "type": "list[object]",
+    "description": "Lista de objeções identificadas (resistência comercial — cliente NÃO QUER avançar). Lista vazia se nenhuma.",
+    "sub_fields": {
+      "category": {
+        "type": "str",
+        "description": "Categoria da taxonomia de referência ou nova em UPPER_SNAKE_CASE"
+      },
+      "partner_quote": {
+        "type": "str",
+        "description": "Citação exata do cliente (até 20 palavras)"
+      },
+      "context": {
+        "type": "str",
+        "description": "O que a IA disse/fez antes que disparou a objeção (até 30 palavras)"
+      }
+    }
+  },
+  "operational_blockers": {
+    "type": "list[object]",
+    "description": "Lista de bloqueios operacionais (cliente QUER MAS NÃO PODE avançar). Lista vazia se nenhum.",
+    "sub_fields": {
+      "category": {
+        "type": "str",
+        "description": "Categoria da taxonomia de referência ou nova em UPPER_SNAKE_CASE"
+      },
+      "evidence": {
+        "type": "str",
+        "description": "Citação exata ou descrição factual do bloqueio (até 20 palavras)"
+      },
+      "impact": {
+        "type": "str",
+        "description": "Como o bloqueio interrompeu a conversa (até 30 palavras)"
+      }
+    }
+  },
+  "partner_questions": {
+    "type": "list[object]",
+    "description": "Lista de perguntas genuínas feitas pelo cliente. Lista vazia se nenhuma.",
+    "sub_fields": {
+      "question": {
+        "type": "str",
+        "description": "Citação exata da pergunta (até 20 palavras)"
+      },
+      "category": {
+        "type": "str",
+        "description": "Categoria da taxonomia de referência ou nova em UPPER_SNAKE_CASE"
+      },
+      "agent_answered_well": {
+        "type": "str",
+        "description": "Qualidade da resposta da IA: YES | PARTIAL | NO"
+      }
+    }
+  },
+  "agent_failures": {
+    "type": "list[object]",
+    "description": "Lista de falhas conversacionais da IA. Lista vazia se nenhuma.",
+    "sub_fields": {
+      "category": {
+        "type": "str",
+        "description": "Categoria da taxonomia de referência ou nova em UPPER_SNAKE_CASE"
+      },
+      "agent_excerpt": {
+        "type": "str",
+        "description": "Citação exata da resposta problemática da IA (até 20 palavras)"
+      },
+      "missed_opportunity": {
+        "type": "str",
+        "description": "O que a IA deveria ter feito (até 25 palavras)"
+      },
+      "agent_persona": {
+        "type": "str",
+        "description": "Qual agente cometeu a falha: CLARA | JULIA | BRUNA | LETICIA | UNKNOWN"
+      }
+    }
+  },
+  "handoff_quality": {
+    "type": "object",
+    "description": "Avaliação do handoff (se houve): Clara → especialista, especialista → humano.",
+    "sub_fields": {
+      "happened": {
+        "type": "str",
+        "description": "Houve handoff na conversa? YES | NO"
+      },
+      "from_to": {
+        "type": "str",
+        "description": "De → Para. Ex: 'CLARA → JULIA', 'BRUNA → HUMANO', 'NONE' se não houve"
+      },
+      "timing": {
+        "type": "str",
+        "description": "Avaliação do timing: APPROPRIATE | TOO_EARLY | TOO_LATE | N_A"
+      },
+      "context_passed": {
+        "type": "str",
+        "description": "Quanto contexto foi passado: FULL | PARTIAL | NONE | N_A"
+      }
+    }
+  },
+  "funnel_stage": {
+    "type": "str",
+    "description": "Estágio do funil onde a conversa parou: FIRST_CONTACT | TRIAGE | QUALIFICATION | PROPERTY_DISCUSSION | OBJECTION | VISIT_NEGOTIATION | PRE_DEAL"
+  },
+  "partner_sentiment": {
+    "type": "str",
+    "description": "Tom geral do cliente: POSITIVE | NEUTRAL | RESISTANT | HOSTILE | UNDETERMINED"
+  },
+  "intent_detected": {
+    "type": "str",
+    "description": "Intenção principal detectada: LOCACAO | VENDA | ANUNCIAR_IMOVEL | SUPORTE_BOLETO | SUPORTE_CONTRATO | SUPORTE_MANUTENCAO | DUVIDA_GERAL | INDEFINIDO"
+  },
+  "loss_trigger": {
+    "type": "str",
+    "description": "Descrição da BARREIRA REAL que causou a perda (até 30 palavras). Frequentemente diferente do que o cliente verbalizou — considere o arco completo."
+  },
+  "analyst_observation": {
+    "type": "str",
+    "description": "Nota analítica acionável sobre a dinâmica desta conversa, com insight pra produto/script/agente (até 80 palavras)."
+  }
+}
